@@ -7,14 +7,19 @@ import Header from '../components/Header';
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/research" element={<Research />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/blog" element={<Blog />} />
-      </Routes>
-    </BrowserRouter>
+    <>
+      <div className="site-window">
+      <BrowserRouter>
+        <Header />
+          
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/research" element={<Research />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/blog" element={<Blog />} />
+          </Routes>
+        </BrowserRouter>
+      </div>
+    </>
   );
 }

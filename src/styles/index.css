@@ -4,14 +4,9 @@
    1. VARIÁVEIS (O motor do nosso "Bootstrap")
    ========================================= */
 :root {
-  /* Paleta de Cores (Baseada na sua referência de Modo Claro) */
-  --bg-color: #F5F0E6; /* Bege elegante do fundo */
-  --text-main: #1A1E23; /* Grafite escuro para contraste */
-  --text-muted: #6B7280; /* Cinza para textos menores/datas */
-  
-  /* Tipografia */
-  --font-serif: 'Playfair Display', Georgia, serif;
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  /* ... suas outras cores continuam aqui ... */
+  --bg-outer: #EAE3D6; /* O fundo mais escuro que fica por trás da janela */
+  --bg-inner: #F5F0E6; /* O bege claro da sua imagem (a janela em si) */
 }
 
 /* =========================================
@@ -23,12 +18,16 @@
   box-sizing: border-box;
 }
 
+
+
 body {
-  background-color: var(--bg-color);
+  /* O corpo inteiro da página agora tem a cor mais escura */
+  background-color: var(--bg-outer); 
   color: var(--text-main);
   font-family: var(--font-sans);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
+  
+  /* Isso cria o "respiro" nas laterais e no topo/fundo da tela */
+  padding: 40px 20px; 
 }
 
 /* Títulos sempre usam a fonte elegante com serifa */
@@ -77,8 +76,8 @@ a:hover {
 }
 
 .navbar-logo-circle {
-  background-color: var(--text-main);
-  color: var(--bg-color);
+background-color: #1A1E23;
+  color: #F5F0E6; 
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -113,4 +112,20 @@ a:hover {
 
 .nav-item:hover {
   border-bottom: 1px solid var(--text-main);
+}
+
+.site-window {
+  background-color: var(--bg-inner); /* Cor bege clarinha */
+  max-width: 1000px; /* Largura máxima da janela */
+  margin: 0 auto; /* Centraliza a janela na tela */
+  min-height: 85vh; /* Garante que a janela seja alta mesmo se tiver pouco texto */
+  border-radius: 24px; /* O segredo: as bordas arredondadas da sua imagem! */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04); /* Uma sombra super suave para dar profundidade */
+  overflow: hidden; /* Corta qualquer coisa que vaze das bordas arredondadas */
+}
+
+/* Ajuste sutil no Header para ele desgrudar do topo da nova janela */
+.navbar {
+  /* ... suas outras regras do navbar ... */
+  padding: 40px 40px 0 40px; 
 }
