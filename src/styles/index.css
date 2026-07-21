@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+/* =========================================
+   1. VARIÁVEIS (O motor do nosso "Bootstrap")
+   ========================================= */
+:root {
+  /* Paleta de Cores (Baseada na sua referência de Modo Claro) */
+  --bg-color: #F5F0E6; /* Bege elegante do fundo */
+  --text-main: #1A1E23; /* Grafite escuro para contraste */
+  --text-muted: #6B7280; /* Cinza para textos menores/datas */
+  
+  /* Tipografia */
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* =========================================
+   2. RESET (Limpando as regras do navegador)
+   ========================================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Títulos sempre usam a fonte elegante com serifa */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.2s ease;
+}
+
+a:hover {
+  opacity: 0.6;
+}
+
+/* =========================================
+   3. CLASSES GLOBAIS DE LAYOUT
+   ========================================= */
+/* Container restringe a largura da tela para facilitar a leitura (Estilo Medium) */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* =========================================
+   4. COMPONENTE: HEADER (Barra de Navegação)
+   ========================================= */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 0;
+  margin-bottom: 60px;
+}
+
+/* A parte esquerda: "RD Rafael Duarte" */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar-logo-circle {
+  background-color: var(--text-main);
+  color: var(--bg-color);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}
+
+.navbar-name {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* A parte direita: Os links (Home, Research, etc) */
+.navbar-links {
+  display: flex;
+  gap: 24px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.nav-item {
+  color: var(--text-main);
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+  transition: border-color 0.2s ease;
+}
+
+.nav-item:hover {
+  border-bottom: 1px solid var(--text-main);
+}
