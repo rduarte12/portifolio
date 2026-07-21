@@ -394,3 +394,96 @@ background-color: #1A1E23;
   object-fit: contain; /* Garante que as proporções do seu SVG sejam respeitadas */
   flex-shrink: 0; /* Muito importante: impede o celular de achatar a imagem */
 }
+
+/* =========================================
+   CARTÕES (Trabalhos Recentes)
+   ========================================= */
+.recent-work-section {
+  margin-top: 40px;
+  margin-bottom: 60px;
+}
+
+.section-title {
+  font-size: 1.4rem;
+  margin-bottom: 24px;
+  color: var(--text-main);
+  font-weight: bold;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 colunas no computador */
+  gap: 24px;
+}
+
+.card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.card {
+  background-color: transparent;
+  border: 1px solid #D5CEC2;
+  border-radius: 12px;
+  padding: 24px;
+  height: 100%;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  background-color: var(--bg-inner);
+  border-color: var(--text-main);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+}
+
+.card-title {
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+  color: var(--text-main);
+  hyphens: auto; /* Evita buracos grandes entre as palavras */
+}
+
+.card-description {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 24px;
+  flex-grow: 1; 
+  text-align: justify; /* Justifica a descrição */
+  hyphens: auto; /* Evita buracos grandes entre as palavras */
+}
+
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.card-tag {
+  background-color: #E2DBD0;
+  color: var(--text-main);
+  font-size: 0.75rem;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-weight: 500;
+}
+
+.card-image {
+  width: 100%;
+  height: 180px; /* Trava a altura para os cards ficarem simétricos */
+  object-fit: cover; /* Recorta o excesso da imagem sem amassar */
+  border-radius: 8px; /* Cantos arredondados combinando com o cartão */
+  margin-bottom: 20px; /* Dá um respiro antes do título */
+  background-color: #E2DBD0; /* Cor de fundo caso a imagem demore a carregar */
+}
+
+/* Responsividade dos Cartões para Celular */
+@media (max-width: 600px) {
+  .cards-grid {
+    grid-template-columns:  1fr; /* 1 coluna no celular */
+  }
+}

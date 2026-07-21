@@ -1,3 +1,5 @@
+import Card from '../components/Card';
+
 export default function Home() {
   return (
     <main className="container">
@@ -48,6 +50,41 @@ export default function Home() {
             </div>
 
           </div>
+
+        </div>
+
+        <div className="section-divider" style={{ marginTop: '20px', marginBottom: '20px' }}></div>
+        <h3 className="about-title" style={{ fontWeight: 'bold', marginLeft: "5px", marginBottom: "10px" }}>Recent Work</h3>
+        <div className="cards-grid">
+            
+            <Card 
+                title="The architecture of my Portifolio"
+                description="The architecture of my Portifolio, including the technologies used and the design decisions made."
+                tags={["Cloud Computer", "React", "AWS"]}
+                link="/projects/portifolio"
+            ></Card>
+
+            <Card 
+                title="Predict Churn in the Telco Dataset"
+                description="Predict Churn  and churn rate of customers in the Telco dataset."
+                tags={["Machine Learning", "Data Science"]}
+                link="/projects/telco"
+            ></Card>
+
+            <Card
+                title="Graph Neural Networks for Image Classification"
+                description="A research project that explores the use of Graph Neural Networks for image classification tasks."
+                tags={["Machine Learning", "Graph Neural Networks"]}
+                link="/projects/grande"
+            ></Card>
+
+            <Card
+                title="Java Event Planner"
+                description="A Java application that allows groups of users to plan and manage events, including scheduling and reminders."
+                tags={["Java", "Software Engineering"]}
+                link="/projects/java-event-planner"
+            ></Card>
+
 
         </div>
 
