@@ -245,3 +245,46 @@ background-color: #1A1E23;
                             muito alta no celular, pode trocar por 16 / 9 (formato paisagem) */
   }
 }
+
+/* =========================================
+   BOTÕES GLOBAIS
+   ========================================= */
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: var(--text-main);
+  color: var(--bg-inner);
+  border: 1px solid var(--text-main);
+}
+
+.btn-primary:hover {
+  opacity: 0.85;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--text-main);
+}
+
+.btn-outline:hover {
+  background-color: var(--text-main);
+  color: var(--bg-inner);
+}
+
+.about-buttons {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+  flex-wrap: wrap; /* Garante que os botões desçam de linha graciosamente no celular */
+}

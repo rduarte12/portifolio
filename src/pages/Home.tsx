@@ -17,7 +17,7 @@ export default function Home() {
         
         <div className="about-content">
           
-          <img src="./src/assets/image.png" alt="Rafael Duarte" className="about-image" />
+          <img src="/image.png" alt="Rafael Duarte" className="about-image" />
           
           <div className="about-text-content">
             <p className="about-text">
@@ -29,7 +29,20 @@ export default function Home() {
               projects. In the moment, <span style={{ fontWeight: 'bold' }}>I am focusing on developing applications for Graph Neural Networks models.</span>
             </p>
 
+            <div className="about-buttons">
+                <a href="#" target="_blank" rel="noopener noreferrer" className="btn btn-primary">
+                    Resumé
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer" className="btn btn-outline">
+                    Curriculum
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer" className="btn btn-outline">
+                    Súmula Curricular Acadêmica
+                </a>
+            </div>
+
           </div>
+
         </div>
 
       </section>
