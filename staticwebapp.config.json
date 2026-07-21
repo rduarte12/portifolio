@@ -1,5 +1,16 @@
 {
-  "navigationFallback": {
-    "rewrite": "/index.html"
-  }
+  "routes": [
+    {
+      "route": "/research*",
+      "rewrite": "/index.html"
+    },
+    {
+      "route": "/projects*",
+      "rewrite": "/index.html"
+    },
+    {
+      "route": "/blog*",
+      "rewrite": "/index.html"
+    }
+  ]
 }
