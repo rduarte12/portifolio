@@ -356,7 +356,11 @@ background-color: #1A1E23;
   gap: 16px;
 }
 
+/* 1. Transformamos o link em um container Flex para alinhar imagem e texto */
 .social-links a {
+  display: flex;
+  align-items: center; /* Centraliza a imagem e o texto verticalmente */
+  gap: 6px; /* Espacinho elegante entre o ícone e a palavra */
   color: var(--text-muted);
   font-size: 0.85rem;
   font-weight: 500;
@@ -365,13 +369,20 @@ background-color: #1A1E23;
 }
 
 .social-links a:hover {
-  color: var(--text-main); /* Fica escuro quando passa o mouse */
+  color: var(--text-main); 
 }
 
-/* Responsividade do Rodapé para Celular */
+/* 2. Nova regra para garantir que o ícone fique do tamanho exato do texto */
+.social-links a img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+/* Responsividade do Rodapé para Celular (continua igual) */
 @media (max-width: 600px) {
   .footer-content {
-    flex-direction: column; /* Empilha o copyright e os links */
+    flex-direction: column; 
     gap: 16px;
     text-align: center;
   }

@@ -12,10 +12,10 @@ export default function Footer() {
         <div className="social-links">
           {/* Lembre-se de colocar os seus links reais aqui */}
           <a href="https://github.com/rduarte12" target="_blank" rel="noopener noreferrer">
-            GitHub
+            <img src="/github-icon.svg" alt="GitHub" className="social-icon" style={{ width: '24px', height: '24px' }} /> GitHub
           </a>
           <a href="https://linkedin.com/in/rafael-mendonca-duarte" target="_blank" rel="noopener noreferrer">
-            LinkedIn
+            <img src="/linkedin-icon.svg" alt="LinkedIn" className="social-icon" style={{ width: '24px', height: '24px' }} /> LinkedIn
           </a>
         </div>
 

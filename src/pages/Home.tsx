@@ -4,7 +4,7 @@ export default function Home() {
       
       {/* Introduction */}
       <section className="hero-section">
-        <h1 className="hero-title">Hello, I am Rafael Duarte!</h1>
+        <h1 className="hero-title">Hello, I am Rafael Mendonça Duarte!</h1>
         <h2 className="hero-subtitle">Machine Learning Researcher & Information Systems Student</h2>
       </section>
 
