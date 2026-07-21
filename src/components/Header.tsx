@@ -1,3 +1,5 @@
+import { NavLink } from 'react-router-dom';
+
 export default function Header() {
   return (
     <header className="container">
@@ -11,12 +13,37 @@ export default function Header() {
 
         {/* Lado Direito */}
         <div className="navbar-links">
-          <a href="/" className="nav-item">Home</a>
-          <a href="/research" className="nav-item">Research</a>
-          <a href="/projects" className="nav-item">Projects</a>
-          <a href="/blog" className="nav-item">Blog</a>
+          
+          <NavLink 
+            to="/" 
+            end 
+            className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}
+          >
+            Home
+          </NavLink>
+          
+          <NavLink 
+            to="/research" 
+            className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}
+          >
+            Research
+          </NavLink>
+          
+          <NavLink 
+            to="/projects" 
+            className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}
+          >
+            Projects
+          </NavLink>
+          
+          <NavLink 
+            to="/blog" 
+            className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}
+          >
+            Blog
+          </NavLink>
+
         </div>
-        
       </nav>
     </header>
   );

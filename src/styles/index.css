@@ -87,6 +87,7 @@ background-color: #1A1E23;
   font-weight: 700;
   font-size: 0.8rem;
   letter-spacing: 1px;
+  flex-shrink: 0;
 }
 
 .navbar-name {
@@ -128,4 +129,38 @@ background-color: #1A1E23;
 .navbar {
   /* ... suas outras regras do navbar ... */
   padding: 40px 40px 0 40px; 
+}
+
+/* =========================================
+   ESTILO PARA O LINK ATIVO (Página Atual)
+   ========================================= */
+.nav-item.active {
+  border-bottom: 1px solid var(--text-main); /* Cria o risco sublinhado */
+  font-weight: 600; /* Deixa um pouquinho mais grosso */
+}
+
+/* =========================================
+   RESPONSIVIDADE (Celulares)
+   ========================================= */
+@media (max-width: 600px) {
+  body {
+    padding: 16px; /* Diminui o respiro externo para sobrar mais tela */
+  }
+  
+  .site-window {
+    border-radius: 16px; /* Bordas levemente menores no mobile */
+  }
+
+  .navbar {
+    flex-direction: column; /* Coloca os links embaixo do seu nome */
+    align-items: flex-start; /* Alinha o "RD Rafael Duarte" totalmente à esquerda */
+    padding: 24px 24px 0 24px;
+    gap: 20px; /* Espaço entre o seu nome e os links */
+  }
+
+  .navbar-links {
+    flex-wrap: wrap; /* Se faltar espaço, os links descem de linha graciosamente */
+    gap: 16px;
+    font-size: 0.85rem; /* Reduz a fonte levemente para caber o "Blog" */
+  }
 }
