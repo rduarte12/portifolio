@@ -54,7 +54,8 @@ a:hover {
 .container {
   max-width: 800px;
   margin: 0 auto;
-  padding: 0 24px;
+  width: 100%;
+  padding: 0 20px;
 }
 
 /* =========================================
@@ -66,6 +67,11 @@ a:hover {
   align-items: center;
   padding: 40px 0;
   margin-bottom: 60px;
+
+  /* Adicione estas 3 linhas para alinhar com o About Me */
+  max-width: 800px; /* A mesma largura exata da about-section */
+  margin: 0 auto;   /* Centraliza o cabeçalho */
+  padding: 40px 0 0 0; /* Tira o padding lateral no notebook para encostar na foto e no texto */
 }
 
 /* A parte esquerda: "RD Rafael Duarte" */
@@ -145,9 +151,10 @@ background-color: #1A1E23;
 
   .navbar {
     flex-direction: column; /* Coloca os links embaixo do seu nome */
-    align-items: flex-start; /* Alinha o "RD Rafael Duarte" totalmente à esquerda */
+    align-items: left; /* Alinha o "RD Rafael Duarte" totalmente à esquerda */
     padding: 24px 24px 0 24px;
     gap: 20px; /* Espaço entre o seu nome e os links */
+    padding: 24px 0 0 0;
   }
 
   .navbar-links {
@@ -224,6 +231,8 @@ background-color: #1A1E23;
   color: var(--text-muted);
   font-size: 0.95rem;
   line-height: 1.7; /* Aumenta o espaço entre as linhas para facilitar a leitura longa */
+  text-align: justify; /* Justifica o texto para um visual mais limpo */
+  hyphens: auto;
 }
 
 /* Responsividade (Celular) */
@@ -247,18 +256,38 @@ background-color: #1A1E23;
 }
 
 /* =========================================
-   BOTÕES GLOBAIS
+   BOTÕES GLOBAIS (Estilo Sólido)
    ========================================= */
+.about-buttons {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+  flex-wrap: wrap; /* Garante que não quebrem no celular */
+}
+
 .btn {
   display: inline-block;
-  padding: 10px 20px;
+  padding: 10px 24px;
   border-radius: 8px;
   font-family: var(--font-sans);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 500;
   text-align: center;
   cursor: pointer;
   transition: all 0.2s ease;
+  
+  /* O visual de botão que você pediu */
+  background-color: #E2DBD0; /* Um bege ligeiramente mais escuro que o fundo */
+  color: var(--text-main);
+  border: 1px solid #D5CEC2;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04); /* Sombra leve para dar profundidade */
+}
+
+.btn:hover {
+  background-color: var(--text-main);
+  color: var(--text-main);
+  transform: translateY(-2px); /* Efeito tátil de levitar ao passar o mouse */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
 }
 
 .btn-primary {
@@ -287,4 +316,70 @@ background-color: #1A1E23;
   gap: 16px;
   margin-top: 24px;
   flex-wrap: wrap; /* Garante que os botões desçam de linha graciosamente no celular */
+}
+
+/* =========================================
+   DIVISÓRIA EDITORIAL (Linha)
+   ========================================= */
+.section-divider {
+  border: 0;
+  height: 1px;
+  background-color: #D5CEC2; /* A mesma cor sutil da borda dos botões */
+  width: 100%;
+  max-width: 600px; /* Garante que a linha não seja infinitamente longa */
+  margin: -50px auto 30px auto; /* Centraliza a linha e empurra o About Me para baixo */
+}
+
+/* =========================================
+   RODAPÉ (Footer & Copyright)
+   ========================================= */
+.footer {
+  margin-top: 80px; /* Empurra o rodapé para o fundo, dando um bom respiro da última seção */
+  padding-bottom: 40px;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 24px;
+  border-top: 1px solid #D5CEC2; /* A mesma linha elegante da Home */
+}
+
+.copyright {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.social-links {
+  display: flex;
+  gap: 16px;
+}
+
+.social-links a {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.social-links a:hover {
+  color: var(--text-main); /* Fica escuro quando passa o mouse */
+}
+
+/* Responsividade do Rodapé para Celular */
+@media (max-width: 600px) {
+  .footer-content {
+    flex-direction: column; /* Empilha o copyright e os links */
+    gap: 16px;
+    text-align: center;
+  }
+}
+
+.navbar-logo-image {
+  width: 32px;
+  height: 32px;
+  object-fit: contain; /* Garante que as proporções do seu SVG sejam respeitadas */
+  flex-shrink: 0; /* Muito importante: impede o celular de achatar a imagem */
 }

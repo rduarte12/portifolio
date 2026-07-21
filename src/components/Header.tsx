@@ -6,7 +6,7 @@ export default function Header() {
       <nav className="navbar">
         
         <div className="navbar-brand">
-          <span className="navbar-logo-circle">RD</span>
+          <img src="/statistic-graph.svg" alt="Rafael Duarte Logo" className="navbar-logo-image" />
           <span className="navbar-name">Rafael Duarte</span>
         </div>
 
