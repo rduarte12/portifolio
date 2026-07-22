@@ -6,7 +6,7 @@ export default function Home() {
       
       {/* Introduction */}
       <section className="hero-section">
-        <h1 className="hero-title">Hello, I am Rafael Mendonça Duarte!</h1>
+        <h1 className="hero-title">Rafael Mendonça Duarte</h1>
         <h2 className="hero-subtitle">Machine Learning Researcher & Information Systems Student</h2>
       </section>
 
@@ -33,20 +33,33 @@ export default function Home() {
               to continuous learning and actively seek opportunities to apply my skills in real-world 
               projects. In the moment, <span style={{ fontWeight: 'bold' }}>I am focusing on developing applications for Graph Neural Networks models.</span>
             </p>
+            <div className="section-divider" style={{ marginTop: '10px', marginBottom: '20px' }}></div>
+            <div className="about-text">
+                <p style={{ marginBottom: '20px' }}>These are the <strong>main technologies</strong>  I work with:</p>
+                <div className="card-tags">
+                                       
+                    <span className="card-tag">Python and PyTorch</span>
+                    <span className="card-tag">Java</span>
+                    <span className="card-tag">Machine Learning</span> 
+                    <span className="card-tag">Docker</span>
+                    <span className="card-tag">SQL</span>  
+                    <span className="card-tag">Cloud Computing</span>
+                </div>
+            </div>
             <div className="section-divider" style={{ marginTop: '20px', marginBottom: '20px' }}></div>
             <div>
                 <p className="about-text">
-                    Feel free to check my <span style={{ fontWeight: 'bold' }}>Resumé</span> and <span style={{ fontWeight: 'bold' }}>Curriculum Vitae</span> for more details about me and my work.
+                    Feel free to check my <span style={{ fontWeight: 'bold' }}>Cover Letter</span> and <span style={{ fontWeight: 'bold' }}>Curriculum Vitae</span> for more details about me and my work.
                 </p>
                 <div className="about-buttons">
                 
                     <a href="https://github.com/rduarte12/portifolio-documents/blob/main/Resum%C3%A9___English_Version.pdf" target="_blank" rel="noopener noreferrer" className="btn">
-                        Resumé
+                        Cover Letter
                     </a>
                     <a href="https://github.com/rduarte12/portifolio-documents/blob/main/Curriculum_Vitae.pdf" target="_blank" rel="noopener noreferrer" className="btn">
                         Curriculum Vitae
                     </a>
-                </div>
+              </div>
             </div>
 
           </div>
@@ -54,7 +67,7 @@ export default function Home() {
         </div>
 
         <div className="section-divider" style={{ marginTop: '20px', marginBottom: '20px' }}></div>
-        <h3 className="about-title" style={{ fontWeight: 'bold', marginLeft: "5px", marginBottom: "10px" }}>Recent Work</h3>
+        <h3 className="about-title" style={{ fontWeight: 'bold', marginLeft: "5px", marginBottom: "10px" }}>Highlights</h3>
         <div className="cards-grid">
             
             <Card 
