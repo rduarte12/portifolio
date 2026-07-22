@@ -1,16 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,500;0,600;0,700;1,400&display=swap');
 @import "tailwindcss";
 
 /* =========================================
-   1. VARIÁVEIS (O motor do nosso "Bootstrap")
+   1. VARIÁVEIS DE FONTE E CORES
    ========================================= */
 :root {
-  /* ... suas outras cores continuam aqui ... */
-  --bg-outer: #EAE3D6; /* O fundo mais escuro que fica por trás da janela */
-  --bg-inner: #F5F0E6; /* O bege claro da sua imagem (a janela em si) */
+  --bg-outer: #EAE3D6;
+  --bg-inner: #F5F0E6;
+  --text-main: #1C1C1C;
+  --text-muted: #4A4A4A;
+  --border-color: #D5CEC2;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: 'Lora', Georgia, serif;
 }
 
 /* =========================================
-   2. RESET (Limpando as regras do navegador)
+   2. RESET E TAGS BASE
    ========================================= */
 * {
   margin: 0;
@@ -18,22 +23,17 @@
   box-sizing: border-box;
 }
 
-
-
 body {
-  /* O corpo inteiro da página agora tem a cor mais escura */
   background-color: var(--bg-outer); 
   color: var(--text-main);
   font-family: var(--font-sans);
-  
-  /* Isso cria o "respiro" nas laterais e no topo/fundo da tela */
-  padding: 40px 20px; 
+  -webkit-font-smoothing: antialiased;
+  padding: 40px 20px;
 }
 
-/* Títulos sempre usam a fonte elegante com serifa */
+/* Títulos por padrão usam Sans-Serif moderna (Inter) */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-serif);
-  font-weight: 500;
+  font-family: var(--font-sans);
   color: var(--text-main);
 }
 
@@ -48,442 +48,118 @@ a:hover {
 }
 
 /* =========================================
-   3. CLASSES GLOBAIS DE LAYOUT
+   3. ESTRUTURA MACRO (Janela e Container)
    ========================================= */
-/* Container restringe a largura da tela para facilitar a leitura (Estilo Medium) */
+.site-window {
+  background-color: var(--bg-inner); 
+  max-width: 1000px; 
+  margin: 0 auto; 
+  min-height: 85vh; 
+  border-radius: 24px; 
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04); 
+  overflow: hidden; 
+}
+
 .container {
-  max-width: 800px;
+  max-width: 800px; /* Trava a largura da leitura (Estilo Medium) */
   margin: 0 auto;
   width: 100%;
   padding: 0 20px;
 }
 
+.divider {
+  border: 0; height: 1px; width: 100%;
+  background-color: var(--border-color);
+  margin: 40px auto;
+}
+
 /* =========================================
-   4. COMPONENTE: HEADER (Barra de Navegação)
+   4. CLASSES GENÉRICAS (BLOCOS DE LEGO)
    ========================================= */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 40px 0;
-  margin-bottom: 60px;
+/* Layout e Alinhamento */
+.flex-row { display: flex; align-items: center; }
+.flex-col { display: flex; flex-direction: column; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.flex-wrap { flex-wrap: wrap; }
 
-  /* Adicione estas 3 linhas para alinhar com o About Me */
-  max-width: 800px; /* A mesma largura exata da about-section */
-  margin: 0 auto;   /* Centraliza o cabeçalho */
-  padding: 40px 0 0 0; /* Tira o padding lateral no notebook para encostar na foto e no texto */
-}
+/* Espaçamentos (Gaps) */
+.gap-sm { gap: 8px; }
+.gap-md { gap: 16px; }
+.gap-lg { gap: 24px; }
 
-/* A parte esquerda: "RD Rafael Duarte" */
-.navbar-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+/* Tipografia */
+.text-justify { text-align: justify; hyphens: auto; }
+.text-muted { color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; }
+.text-main { color: var(--text-main); }
+.text-sans { font-family: var(--font-sans); }
+.text-serif { font-family: var(--font-serif); }
+.font-bold { font-weight: 700; }
+.font-medium { font-weight: 500; }
 
-.navbar-logo-circle {
-background-color: #1A1E23;
-  color: #F5F0E6; 
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* Títulos de Seção (About Me, Highlights) em Serifa elegante */
+.title-section {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
   font-weight: 700;
-  font-size: 0.8rem;
-  letter-spacing: 1px;
-  flex-shrink: 0;
-}
-
-.navbar-name {
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: 1.1rem;
-}
-
-/* A parte direita: Os links (Home, Research, etc) */
-.navbar-links {
-  display: flex;
-  gap: 24px;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.nav-item {
-  color: var(--text-main);
-  border-bottom: 1px solid transparent;
-  padding-bottom: 2px;
-  transition: border-color 0.2s ease;
-}
-
-.nav-item:hover {
-  border-bottom: 1px solid var(--text-main);
-}
-
-.site-window {
-  background-color: var(--bg-inner); /* Cor bege clarinha */
-  max-width: 1000px; /* Largura máxima da janela */
-  margin: 0 auto; /* Centraliza a janela na tela */
-  min-height: 85vh; /* Garante que a janela seja alta mesmo se tiver pouco texto */
-  border-radius: 24px; /* O segredo: as bordas arredondadas da sua imagem! */
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04); /* Uma sombra super suave para dar profundidade */
-  overflow: hidden; /* Corta qualquer coisa que vaze das bordas arredondadas */
-}
-
-/* Ajuste sutil no Header para ele desgrudar do topo da nova janela */
-.navbar {
-  /* ... suas outras regras do navbar ... */
-  padding: 40px 40px 0 40px; 
-}
-
-/* =========================================
-   RESPONSIVIDADE (Celulares)
-   ========================================= */
-@media (max-width: 600px) {
-  body {
-    padding: 16px; /* Diminui o respiro externo para sobrar mais tela */
-  }
-  
-  .site-window {
-    border-radius: 16px; /* Bordas levemente menores no mobile */
-  }
-
-  .navbar {
-    flex-direction: column; /* Coloca os links embaixo do seu nome */
-    align-items: left; /* Alinha o "RD Rafael Duarte" totalmente à esquerda */
-    padding: 24px 24px 0 24px;
-    gap: 20px; /* Espaço entre o seu nome e os links */
-    padding: 24px 0 0 0;
-  }
-
-  .navbar-links {
-    flex-wrap: wrap; /* Se faltar espaço, os links descem de linha graciosamente */
-    gap: 16px;
-    font-size: 0.85rem; /* Reduz a fonte levemente para caber o "Blog" */
-  }
-}
-
-/* =========================================
-   PÁGINA HOME
-   ========================================= */
-
-/* Centralizando o Hero para bater com a referência */
-.hero-section {
-  margin-top: 60px;
-  margin-bottom: 80px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.hero-title {
-  font-size: 3rem;
-  margin-bottom: 8px;
-  line-height: 1.2;
-}
-
-.hero-subtitle {
-  font-family: var(--font-sans);
-  color: var(--text-muted);
-  font-size: 1.1rem;
-  font-weight: 400;
-}
-
-/* Estrutura do About Me */
-.about-section {
-  margin-bottom: 60px;
-  max-width: 800px;
-  margin: 0 auto; 
-}
-
-.about-title {
-  font-size: 1.4rem;
   margin-bottom: 24px;
   color: var(--text-main);
 }
 
-.about-content {
-  display: flex;
-  gap: 40px; /* Aumentei o espaço entre a foto e o texto */
-  align-items: stretch; /* Força o texto a alinhar com o topo da foto */
-}
-
-/* O Segredo da Foto Perfeita */
-.about-image {
-  height: auto; 
-  width: auto;
-  aspect-ratio: 1 / 1; 
-  max-width: 40%; 
-  
-  object-fit: cover; 
-  border-radius: 16px;
-  flex-shrink: 0;
-  background-color: #D1D5DB;
-}
-
-.about-text-content {
-  flex: 1; /* Faz o texto ocupar todo o espaço restante à direita */
-}
-
-.about-text {
-  color: var(--text-muted);
-  font-size: 0.95rem;
-  line-height: 1.7; /* Aumenta o espaço entre as linhas para facilitar a leitura longa */
-  text-align: justify; /* Justifica o texto para um visual mais limpo */
-  hyphens: auto;
-}
-
-/* Responsividade (Celular) */
-@media (max-width: 600px) {
-  .hero-title {
-    font-size: 2.2rem;
-  }
-  
-  .about-content {
-    flex-direction: column; 
-    gap: 24px;
-  }
-
-  .about-image {
-    width: 100%; /* A imagem agora ocupa a largura inteira do texto/tela */
-    max-width: 100%; /* Remove a trava de 40% que colocamos no computador */
-    height: auto; /* A altura se ajusta automaticamente */
-    aspect-ratio: 1 / 1; /* Mantém a imagem quadrada, mas se achar que ficou 
-                            muito alta no celular, pode trocar por 16 / 9 (formato paisagem) */
-  }
-}
-
 /* =========================================
-   BOTÕES GLOBAIS (Estilo Sólido)
+   5. COMPONENTES PRONTOS
    ========================================= */
-.about-buttons {
-  display: flex;
-  gap: 16px;
-  margin-top: 24px;
-  flex-wrap: wrap; /* Garante que não quebrem no celular */
-}
-
 .btn {
+  padding: 10px 24px; border-radius: 8px;
+  font-size: 0.95rem; font-weight: 500; cursor: pointer;
+  background-color: #E2DBD0; border: 1px solid var(--border-color);
+  color: var(--text-main); transition: all 0.2s ease;
   display: inline-block;
-  padding: 10px 24px;
-  border-radius: 8px;
-  font-family: var(--font-sans);
-  font-size: 0.95rem;
-  font-weight: 500;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  
-  /* O visual de botão que você pediu */
-  background-color: #E2DBD0; /* Um bege ligeiramente mais escuro que o fundo */
-  color: var(--text-main);
-  border: 1px solid #D5CEC2;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04); /* Sombra leve para dar profundidade */
 }
+.btn:hover { background-color: var(--bg-inner); color: var(--text-main); transform: translateY(-2px); opacity: 1; }
 
-.btn:hover {
-  background-color: var(--text-main);
-  color: var(--text-main);
-  transform: translateY(-2px); /* Efeito tátil de levitar ao passar o mouse */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
-}
-
-.btn-primary {
-  background-color: var(--text-main);
-  color: var(--bg-inner);
-  border: 1px solid var(--text-main);
-}
-
-.btn-primary:hover {
-  opacity: 0.85;
-}
-
-.btn-outline {
-  background-color: transparent;
-  color: var(--text-main);
-  border: 1px solid var(--text-main);
-}
-
-.btn-outline:hover {
-  background-color: var(--text-main);
-  color: var(--bg-inner);
-}
-
-.about-buttons {
-  display: flex;
-  gap: 16px;
-  margin-top: 24px;
-  flex-wrap: wrap; /* Garante que os botões desçam de linha graciosamente no celular */
-}
-
-/* =========================================
-   DIVISÓRIA EDITORIAL (Linha)
-   ========================================= */
-.section-divider {
-  border: 0;
-  height: 1px;
-  background-color: #D5CEC2; /* A mesma cor sutil da borda dos botões */
-  width: 100%;
-  max-width: 600px; /* Garante que a linha não seja infinitamente longa */
-  margin: -50px auto 30px auto; /* Centraliza a linha e empurra o About Me para baixo */
-}
-
-/* =========================================
-   RODAPÉ (Footer & Copyright)
-   ========================================= */
-.footer {
-  margin-top: 80px; /* Empurra o rodapé para o fundo, dando um bom respiro da última seção */
-  padding-bottom: 40px;
-}
-
-.footer-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 24px;
-  border-top: 1px solid #D5CEC2; /* A mesma linha elegante da Home */
-}
-
-.copyright {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-}
-
-.social-links {
-  display: flex;
-  gap: 16px;
-}
-
-/* 1. Transformamos o link em um container Flex para alinhar imagem e texto */
-.social-links a {
-  display: flex;
-  align-items: center; /* Centraliza a imagem e o texto verticalmente */
-  gap: 6px; /* Espacinho elegante entre o ícone e a palavra */
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  font-weight: 500;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.social-links a:hover {
-  color: var(--text-main); 
-}
-
-/* 2. Nova regra para garantir que o ícone fique do tamanho exato do texto */
-.social-links a img {
-  width: 18px;
-  height: 18px;
-  object-fit: contain;
-}
-
-/* Responsividade do Rodapé para Celular (continua igual) */
-@media (max-width: 600px) {
-  .footer-content {
-    flex-direction: column; 
-    gap: 16px;
-    text-align: center;
-  }
-}
-
-.navbar-logo-image {
-  width: 32px;
-  height: 32px;
-  object-fit: contain; /* Garante que as proporções do seu SVG sejam respeitadas */
-  flex-shrink: 0; /* Muito importante: impede o celular de achatar a imagem */
-}
-
-/* =========================================
-   CARTÕES (Trabalhos Recentes)
-   ========================================= */
-.recent-work-section {
-  margin-top: 40px;
-  margin-bottom: 60px;
-}
-
-.section-title {
-  font-size: 1.4rem;
-  margin-bottom: 24px;
-  color: var(--text-main);
-  font-weight: bold;
-}
-
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 colunas no computador */
-  gap: 24px;
-}
-
-.card-link {
-  text-decoration: none;
-  color: inherit;
-  display: block;
-}
+.grid-2-cols { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
 
 .card {
-  background-color: transparent;
-  border: 1px solid #D5CEC2;
-  border-radius: 12px;
-  padding: 24px;
-  height: 100%;
-  transition: all 0.2s ease;
-  display: flex;
-  flex-direction: column;
+  border: 1px solid var(--border-color); border-radius: 12px;
+  padding: 24px; height: 100%; transition: all 0.2s ease;
+  display: flex; flex-direction: column;
 }
-
 .card:hover {
-  background-color: var(--bg-inner);
-  border-color: var(--text-main);
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
-}
-
-.card-title {
-  font-size: 1.1rem;
-  margin-bottom: 12px;
-  color: var(--text-main);
-  hyphens: auto; /* Evita buracos grandes entre as palavras */
-}
-
-.card-description {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  line-height: 1.6;
-  margin-bottom: 24px;
-  flex-grow: 1; 
-  text-align: justify; /* Justifica a descrição */
-  hyphens: auto; /* Evita buracos grandes entre as palavras */
-}
-
-.card-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.card-tag {
-  background-color: #E2DBD0;
-  color: var(--text-main);
-  font-size: 0.75rem;
-  padding: 4px 12px;
-  border-radius: 16px;
-  font-weight: 500;
+  background-color: var(--bg-inner); border-color: var(--text-main);
+  transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
 }
 
 .card-image {
-  width: 100%;
-  height: 180px; /* Trava a altura para os cards ficarem simétricos */
-  object-fit: cover; /* Recorta o excesso da imagem sem amassar */
-  border-radius: 8px; /* Cantos arredondados combinando com o cartão */
-  margin-bottom: 20px; /* Dá um respiro antes do título */
-  background-color: #E2DBD0; /* Cor de fundo caso a imagem demore a carregar */
+  width: 100%; height: 180px; object-fit: cover;
+  border-radius: 8px; margin-bottom: 20px; background-color: #E2DBD0;
 }
 
-/* Responsividade dos Cartões para Celular */
+.tag { 
+  background-color: #E2DBD0; font-size: 0.75rem; 
+  padding: 4px 12px; border-radius: 16px; 
+}
+
+.about-image {
+  height: auto;
+  width: auto;
+  aspect-ratio: 1 / 1; 
+  max-width: 40%;     
+  object-fit: cover;
+  border-radius: 16px;
+  flex-shrink: 0;
+  background-color: #E2DBD0;
+}
+
+/* =========================================
+   6. RESPONSIVIDADE (CELULAR)
+   ========================================= */
 @media (max-width: 600px) {
-  .cards-grid {
-    grid-template-columns:  1fr; /* 1 coluna no celular */
+  .mobile-col { flex-direction: column; align-items: center; }
+  .grid-2-cols { grid-template-columns: 1fr; }
+  .about-image {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
   }
 }

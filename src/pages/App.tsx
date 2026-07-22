@@ -10,16 +10,19 @@ export default function App() {
   return (
     <>
       <div className="site-window">
-      <BrowserRouter>
-        <Header />
+        <BrowserRouter>
           
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/research" element={<Research />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/blog" element={<Blog />} />
+          <Header />
+            
+
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/research" element={<Research />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/blog" element={<Blog />} />
           </Routes>
           <Footer />
+          
         </BrowserRouter>
       </div>
     </>
