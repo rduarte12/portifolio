@@ -25,7 +25,7 @@ export default function Home() {
         {/* flex-row para computador, mobile-col para empilhar no celular */}
         <div className="flex-row mobile-col gap-lg" style={{ alignItems: 'stretch' }}>
           
-          <img 
+          <img style={{ borderRadius: '8px' }}
             
             src="/image.png" 
             alt="Rafael Duarte" 
@@ -49,8 +49,9 @@ export default function Home() {
                 
                 {/* Nossas classes utilitárias para as Tags */}
                 <div className="flex-row flex-wrap gap-sm">
-                    <span className="tag text-main font-bold">Python and PyTorch</span>
+                    <span className="tag text-main font-bold">Python</span>
                     <span className="tag text-main font-bold">Java</span>
+                    <span className="tag text-main font-bold">JavaScript</span>
                     <span className="tag text-main font-bold">Machine Learning</span> 
                     <span className="tag text-main font-bold">Docker</span>
                     <span className="tag text-main font-bold">SQL</span>  

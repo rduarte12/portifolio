@@ -12,5 +12,8 @@
       "route": "/blog*",
       "rewrite": "/index.html"
     }
-  ]
+  ],
+  "globalHeaders": {
+    "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com; connect-src 'self' https://cloudflareinsights.com https://*.cloudflareinsights.com;"
+  }
 }
