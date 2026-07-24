@@ -1,13 +1,28 @@
 import FeedCard from '../components/FeedCard';
-import postsData from '../data/blogData.json';
+//import postsData from '../data/blogData.json';
 import { useState } from 'react';
+
+interface Post {
+  id: string;
+  title: string;
+  summary: string;
+  date: string;
+  tags: string[];
+  link: string;
+  owner?: string;
+  imgUrl?: string;
+  likesCount?: number;
+  viewsCount?: number;
+  showShareButton?: boolean;
+}
 
 export default function Blog() {
 
+  const postsData: Post[] = [];
+
   const [visibleCount, setVisibleCount] = useState(5);
 
-  const sortedPosts = [...postsData].sort((a, b) => a.id - b.id).reverse(); 
-  const visiblePosts = sortedPosts.slice(0, visibleCount);
+  const sortedPosts = [...postsData].sort((a, b) => Number(a.id) - Number(b.id)).reverse();
 
   const handleLoadMore = () => {
     setVisibleCount((prevCount) => prevCount + 5);
@@ -22,10 +37,10 @@ export default function Blog() {
 
   function filterByTag(posts: typeof postsData, tag: string) {
     if (tag === 'ALL' || tag === '') {
-      return [posts, posts.length] as const;
+      return [posts] as const;
     } else {
       const filteredPosts = posts.filter(post => post.tags.includes(tag));
-      return [filteredPosts, filteredPosts.length] as const;
+      return [filteredPosts] as const;
     }
   }
 
@@ -50,7 +65,7 @@ export default function Blog() {
   }
 
   function filterPosts(posts: typeof postsData, tag: string, query: string) {
-    const [postsByTag, countByTag] = filterByTag(posts, tag);
+    const [postsByTag] = filterByTag(posts, tag);
     const [postsByQuery, countByQuery] = filterByQuery(postsByTag, query);
     return [postsByQuery, countByQuery] as const;
   }
