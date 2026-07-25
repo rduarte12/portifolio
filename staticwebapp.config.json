@@ -11,6 +11,10 @@
     {
       "route": "/blog*",
       "rewrite": "/index.html"
+    },
+    {
+      "route": "/auth",
+      "rewrite": "/index.html"
     }
   ],
   "globalHeaders": {

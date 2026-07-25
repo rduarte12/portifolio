@@ -27,6 +27,7 @@ export default function Header() {
           <Link to="/research"  style={navLinkStyle}>Research</Link>
           <Link to="/projects"  style={navLinkStyle}>Projects</Link>
           <Link to="/blog" style={navLinkStyle}>Blog</Link>
+          
         </div>
         
       </nav>
