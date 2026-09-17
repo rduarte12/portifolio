@@ -11,3 +11,4 @@ import './functions/search-index.js';
 import './functions/telemetry-ingest.js';
 import './functions/get-roles.js';
 import './functions/tags-reconcile.js';
+import './functions/analytics-summary.js';

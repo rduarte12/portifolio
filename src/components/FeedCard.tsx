@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import ShareButton from './ShareButton';
+import { trackReadMoreClick } from '../lib/telemetry';
 
 interface FeedCardProps {
     id: string;
@@ -79,16 +80,17 @@ export default function Feed({
     );
 
     const linkStyle = { textDecoration: 'none', color: 'inherit', display: 'block', height: '100%' };
+    const handleClick = () => trackReadMoreClick(id);
 
     if (isExternal) {
         return (
-            <a href={link} target="_blank" rel="noopener noreferrer" style={linkStyle}>
+            <a href={link} target="_blank" rel="noopener noreferrer" style={linkStyle} onClick={handleClick}>
                 {CardContent}
             </a>
         );
     } else {
         return (
-            <Link to={link} style={linkStyle}>
+            <Link to={link} style={linkStyle} onClick={handleClick}>
                 {CardContent}
             </Link>
         );
