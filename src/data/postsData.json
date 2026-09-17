@@ -1,0 +1,93 @@
+[
+  {
+    "id": "1",
+    "type": "project",
+    "title": "The Architecture of My Portfolio",
+    "summary": "How this portfolio is designed: React + Vite frontend on Azure Static Web Apps, decoupled from a serverless Azure Functions + Cosmos DB backend to stay within the free tier.",
+    "date": "2025-08-10",
+    "tags": ["Cloud Computing", "React", "Azure"],
+    "link": "/projects",
+    "owner": "Rafael Mendonça Duarte",
+    "likesCount": 0,
+    "viewsCount": 0,
+    "showShareButton": true
+  },
+  {
+    "id": "2",
+    "type": "project",
+    "title": "Predicting Customer Churn in the Telco Dataset",
+    "summary": "An end-to-end classification pipeline to predict churn and estimate churn rate for telecom customers, comparing logistic regression, random forest and gradient boosting.",
+    "date": "2025-09-02",
+    "tags": ["Machine Learning", "Data Science"],
+    "link": "/projects",
+    "owner": "Rafael Mendonça Duarte",
+    "likesCount": 0,
+    "viewsCount": 0,
+    "showShareButton": true
+  },
+  {
+    "id": "3",
+    "type": "project",
+    "title": "Java Event Planner",
+    "summary": "A Java desktop application that lets groups of users plan and manage events, including scheduling, reminders and RSVP tracking.",
+    "date": "2025-10-01",
+    "tags": ["Java", "Software Engineering"],
+    "link": "/projects",
+    "owner": "Rafael Mendonça Duarte",
+    "likesCount": 0,
+    "viewsCount": 0,
+    "showShareButton": true
+  },
+  {
+    "id": "4",
+    "type": "research",
+    "title": "Graph Neural Networks for Image Classification",
+    "summary": "Exploring how message-passing architectures on pixel-graphs compare against convolutional baselines for image classification tasks.",
+    "date": "2025-11-05",
+    "tags": ["Machine Learning", "Graph Neural Networks"],
+    "link": "/research",
+    "owner": "Rafael Mendonça Duarte",
+    "likesCount": 0,
+    "viewsCount": 0,
+    "showShareButton": true
+  },
+  {
+    "id": "5",
+    "type": "research",
+    "title": "A Critical Re-reading of \"Attention Is All You Need\"",
+    "summary": "Revisiting the original Transformer paper and how the attention mechanism reshaped the design of modern deep learning architectures.",
+    "date": "2026-01-14",
+    "tags": ["NLP", "Transformers", "Deep Learning"],
+    "link": "/research",
+    "owner": "Rafael Mendonça Duarte",
+    "likesCount": 0,
+    "viewsCount": 0,
+    "showShareButton": true
+  },
+  {
+    "id": "6",
+    "type": "blog",
+    "title": "Fine-tuning LLMs for Brazilian Portuguese",
+    "summary": "Practical notes on adapting open-weight language models to Brazilian Portuguese: tokenization, dataset curation and evaluation pitfalls.",
+    "date": "2025-11-02",
+    "tags": ["NLP", "LLM", "PT-BR"],
+    "link": "/blog",
+    "owner": "Rafael Mendonça Duarte",
+    "likesCount": 0,
+    "viewsCount": 0,
+    "showShareButton": true
+  },
+  {
+    "id": "7",
+    "type": "blog",
+    "title": "From Notebook to Production: Serving ML Models on a Budget",
+    "summary": "Lessons learned deploying small machine learning services on free-tier cloud infrastructure without sacrificing reliability.",
+    "date": "2026-02-01",
+    "tags": ["MLOps", "Cloud Computing"],
+    "link": "/blog",
+    "owner": "Rafael Mendonça Duarte",
+    "likesCount": 0,
+    "viewsCount": 0,
+    "showShareButton": true
+  }
+]
