@@ -87,32 +87,32 @@ export default function Home() {
         
         <div className="grid-2-cols">
             
-            <Card 
+            <Card
                 title="The architecture of my Portfolio"
                 description="The architecture of my Portfolio, including the technologies used and the design decisions made."
                 tags={["Cloud Computing", "React", "AWS"]}
-                link="/projects/portfolio"
+                link="/projects"
             />
 
-            <Card 
+            <Card
                 title="Predict Churn in the Telco Dataset"
                 description="Predict Churn and churn rate of customers in the Telco dataset."
                 tags={["Machine Learning", "Data Science"]}
-                link="/projects/telco"
+                link="/projects"
             />
 
             <Card
                 title="Graph Neural Networks for Image Classification"
                 description="A research project that explores the use of Graph Neural Networks for image classification tasks."
                 tags={["Machine Learning", "Graph Neural Networks"]}
-                link="/projects/grande"
+                link="/research"
             />
 
             <Card
                 title="Java Event Planner"
                 description="A Java application that allows groups of users to plan and manage events, including scheduling and reminders."
                 tags={["Java", "Software Engineering"]}
-                link="/projects/java-event-planner"
+                link="/projects"
             />
 
         </div>
