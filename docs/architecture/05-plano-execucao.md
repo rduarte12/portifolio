@@ -2,6 +2,8 @@
 
 Cada fase indica o que é 100% gratuito no código/config vs. o que exige criar/configurar recursos na Azure.
 
+> **Status**: Fase 0 concluída e mergeada. O código da API (Fase 1: scaffold de Azure Functions; Fase 2: endpoints de leitura) já está implementado em `api/` na branch `claude/fase1-2-backend-api`, junto com a atualização de `staticwebapp.config.json` e do workflow (`api_location: "api"`). **A migração do frontend para consumir a API (parte final da Fase 2) foi propositalmente adiada**: como o Cosmos DB e o GitHub OAuth App ainda não foram provisionados manualmente na Azure/GitHub (etapas que exigem acesso à conta do usuário), trocar a fonte de dados agora faria o site quebrar em produção assim que mergeado. O frontend continua servindo `postsData.json` até que o provisionamento da Fase 1 seja confirmado.
+
 ## Fase 0 — Higiene do código atual (gratuita, sem Azure)
 
 - Corrigir o bug de paginação em `Research.tsx` (`.slice(visibleCount)` → `.slice(0, visibleCount)`).

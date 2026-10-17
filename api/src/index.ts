@@ -1,0 +1,13 @@
+import './functions/posts-list.js';
+import './functions/posts-get.js';
+import './functions/posts-create.js';
+import './functions/posts-update.js';
+import './functions/posts-delete.js';
+import './functions/posts-view.js';
+import './functions/posts-like.js';
+import './functions/tags-list.js';
+import './functions/tags-get.js';
+import './functions/search-index.js';
+import './functions/telemetry-ingest.js';
+import './functions/get-roles.js';
+import './functions/tags-reconcile.js';
