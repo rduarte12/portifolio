@@ -30,6 +30,10 @@
       "route": "/api/posts/{id}",
       "methods": ["PUT", "DELETE"],
       "allowedRoles": ["admin"]
+    },
+    {
+      "route": "/api/analytics/*",
+      "allowedRoles": ["admin"]
     }
   ],
   "auth": {
