@@ -19,26 +19,36 @@
     {
       "route": "/admin*",
       "rewrite": "/index.html",
-      "allowedRoles": ["admin"]
+      "allowedRoles": [
+        "admin"
+      ]
     },
     {
       "route": "/api/posts",
-      "methods": ["POST"],
-      "allowedRoles": ["admin"]
+      "methods": [
+        "POST"
+      ],
+      "allowedRoles": [
+        "admin"
+      ]
     },
     {
       "route": "/api/posts/{id}",
-      "methods": ["PUT", "DELETE"],
-      "allowedRoles": ["admin"]
+      "methods": [
+        "PUT",
+        "DELETE"
+      ],
+      "allowedRoles": [
+        "admin"
+      ]
     },
     {
       "route": "/api/analytics/*",
-      "allowedRoles": ["admin"]
+      "allowedRoles": [
+        "admin"
+      ]
     }
   ],
-  "auth": {
-    "rolesSource": "/api/GetRoles"
-  },
   "globalHeaders": {
     "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com; connect-src 'self' https://cloudflareinsights.com https://*.cloudflareinsights.com;"
   }

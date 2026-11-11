@@ -20,7 +20,7 @@ Cada fase indica o que é 100% gratuito no código/config vs. o que exige criar/
 - Criar os 3 containers (`posts`, `tags`, `accessLogs`) com as partition keys definidas em [02](02-spec-tecnica-dados-api.md) §2.3.
 - Criar/configurar a Azure Function App vinculada ao Static Web App (managed functions — dentro do free tier de SWA, sem custo adicional além do Consumption plan da Function, que também tem grant gratuito de 1M execuções/mês).
 - Registrar um GitHub OAuth App (gratuito) para o login do admin, e configurar as variáveis de ambiente do SWA (`GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`).
-- Configurar `staticwebapp.config.json` com as rotas `allowedRoles` e `rolesSource` descritas em [04](04-admin-auth-telemetria.md).
+- Configurar `staticwebapp.config.json` com as rotas `allowedRoles` descritas em [04](04-admin-auth-telemetria.md).
 
 **Exige**: conta Azure (o free tier de Cosmos DB é por assinatura, então usar a mesma assinatura do SWA), registro do OAuth App no GitHub.
 
@@ -35,7 +35,7 @@ Cada fase indica o que é 100% gratuito no código/config vs. o que exige criar/
 ## Fase 3 — Admin: autenticação, CRUD e editor
 
 - Implementar a tela `/admin` (protegida por `allowedRoles: ["admin"]`) com login via `/.auth/login/github`.
-- Implementar a Function `GetRoles` para restringir o role `admin` ao dono do portfólio.
+- Convidar o próprio usuário GitHub com a role `admin` (portal do SWA → Role management → Invite); `rolesSource` exige plano Standard.
 - Implementar as Functions de escrita: `POST/PUT/DELETE /api/posts`, incluindo validação (Zod) e reconciliação de tags.
 - Implementar o `AdminEditor` (Markdown + preview + sanitização) descrito em [04](04-admin-auth-telemetria.md) §4.3.
 
