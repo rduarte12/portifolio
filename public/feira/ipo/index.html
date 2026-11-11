@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Problema das Câmeras — Apresentação PO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0E1420; --surface:#1B2436; --surface2:#232E44;
+  --cyan:#22D3EE; --green:#34D399; --coral:#FB7185; --violet:#A78BFA;
+  --ink:#F1F5F9; --ink2:#94A3B8; --line:#334155;
+  --mono:'Space Grotesk',ui-monospace,monospace;
+  --disp:'Space Grotesk',system-ui,sans-serif;
+  --body:'Inter',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--bg);color:var(--ink);font-family:var(--body);
+  -webkit-font-smoothing:antialiased;overflow:hidden;
+}
+#deck{height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory;scroll-behavior:smooth;scrollbar-width:none}
+#deck::-webkit-scrollbar{display:none}
+.scene{height:100vh;scroll-snap-align:start;scroll-snap-stop:always;position:relative;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:clamp(18px,4vw,56px);text-align:center;overflow:hidden}
+.kicker{font-family:var(--mono);font-size:clamp(11px,1.4vw,14px);letter-spacing:.18em;
+  text-transform:uppercase;color:var(--cyan);margin-bottom:14px}
+h1{font-family:var(--disp);font-weight:700;line-height:1.05;letter-spacing:-.02em;
+  font-size:clamp(30px,6vw,68px);max-width:16ch}
+h2{font-family:var(--disp);font-weight:700;line-height:1.08;letter-spacing:-.02em;
+  font-size:clamp(24px,4.4vw,48px);max-width:20ch}
+.lead{color:var(--ink2);font-size:clamp(15px,2.1vw,22px);max-width:44ch;margin-top:18px;line-height:1.5}
+.small{color:var(--ink2);font-size:clamp(12px,1.5vw,15px)}
+.btn{font-family:var(--disp);font-weight:600;font-size:clamp(15px,2vw,19px);
+  background:var(--cyan);color:#06202a;border:none;border-radius:999px;
+  padding:14px 30px;cursor:pointer;transition:transform .15s,box-shadow .15s;
+  box-shadow:0 8px 30px rgba(34,211,238,.28)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(34,211,238,.4)}
+.btn:active{transform:translateY(0)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.btn.ghost:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none}
+.row{display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:center}
+.fade{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
+.scene.show .fade{opacity:1;transform:none}
+.scene.show .fade.d1{transition-delay:.12s}
+.scene.show .fade.d2{transition-delay:.24s}
+.scene.show .fade.d3{transition-delay:.36s}
+.scene.show .fade.d4{transition-delay:.48s}
+
+/* progress dots */
+#dots{position:fixed;right:clamp(10px,2vw,22px);top:50%;transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:12px;z-index:40}
+#dots button{width:11px;height:11px;border-radius:50%;border:1.5px solid var(--line);
+  background:transparent;cursor:pointer;padding:0;transition:all .2s}
+#dots button.on{background:var(--cyan);border-color:var(--cyan);transform:scale(1.25)}
+.navarrow{position:fixed;left:50%;transform:translateX(-50%);z-index:40;
+  background:var(--surface);border:1px solid var(--line);color:var(--ink);
+  width:46px;height:46px;border-radius:50%;cursor:pointer;font-size:20px;
+  display:flex;align-items:center;justify-content:center;transition:all .2s}
+.navarrow:hover{border-color:var(--cyan);color:var(--cyan)}
+#arrowDown{bottom:22px}#arrowUp{top:22px}
+.navarrow.hide{opacity:0;pointer-events:none}
+.bounce{animation:bounce 1.8s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(7px)}}
+
+/* ambient cones scene 1 */
+.ambient{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.ambient .cone{position:absolute;width:0;height:0;border-left:140px solid transparent;
+  border-right:140px solid transparent;border-bottom:260px solid rgba(34,211,238,.06);
+  transform-origin:50% 100%;filter:blur(2px)}
+.sweep{animation:sweep 9s ease-in-out infinite}
+@keyframes sweep{0%,100%{transform:rotate(-24deg)}50%{transform:rotate(24deg)}}
+.scene>.inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:0}
+
+/* cards */
+.cards{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:28px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;
+  padding:22px 20px;min-width:180px;max-width:240px;text-align:left}
+.card h3{font-family:var(--disp);font-size:18px;margin-bottom:8px;color:var(--cyan)}
+.card.green h3{color:var(--green)} .card.coral h3{color:var(--coral)} .card.violet h3{color:var(--violet)}
+.card p{color:var(--ink2);font-size:14.5px;line-height:1.45}
+
+/* generic svg point gauge */
+.pointlbl{font-family:var(--mono);font-size:13px;fill:var(--ink)}
+.pointsub{font-family:var(--mono);font-size:11px;fill:var(--ink2)}
+
+/* ---- Scene 3 demo ---- */
+.demowrap{display:grid;grid-template-columns:1.3fr .9fr;gap:22px;width:min(1040px,94vw);
+  margin-top:10px;align-items:stretch}
+@media(max-width:820px){.demowrap{grid-template-columns:1fr}}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:14px;position:relative}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.costbar{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.costbar .val{font-family:var(--mono);font-weight:700;font-size:clamp(26px,4vw,40px);color:var(--cyan)}
+.costbar .lab{font-size:13px;color:var(--ink2);text-transform:uppercase;letter-spacing:.1em}
+.shop{display:flex;flex-direction:column;gap:10px}
+.cam{display:flex;align-items:center;gap:12px;background:var(--surface2);border:1.5px solid var(--line);
+  border-radius:14px;padding:11px 13px;cursor:pointer;transition:all .15s;text-align:left}
+.cam:hover{border-color:var(--cyan)}
+.cam.sel{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(34,211,238,.18);background:#1d3340}
+.cam .glyph{flex:0 0 auto}
+.cam .info{flex:1}
+.cam .nm{font-family:var(--disp);font-weight:600;font-size:15px}
+.cam .meta{font-size:12.5px;color:var(--ink2);font-family:var(--mono)}
+.hint{font-size:13px;color:var(--ink2);min-height:18px;line-height:1.4}
+.result{background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:14px;font-size:14px;line-height:1.5;display:none}
+.result.show{display:block}
+.result .big{font-family:var(--mono);font-weight:700;font-size:22px}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--ink2)}
+.ptgroup{cursor:pointer}
+.ptgroup:hover .hitring{stroke:var(--cyan);opacity:.5}
+.hitring{fill:transparent;stroke:transparent;stroke-width:2;opacity:0}
+.flash{animation:flash .4s ease}
+@keyframes flash{0%{filter:brightness(1)}40%{filter:brightness(1.8)}100%{filter:brightness(1)}}
+
+/* ---- Scene 4 explosion ---- */
+.explo{display:flex;flex-direction:column;align-items:center;gap:20px;width:min(760px,92vw)}
+.bignum{font-family:var(--mono);font-weight:700;font-size:clamp(30px,7vw,62px);color:var(--violet);line-height:1}
+.bignum sup{font-size:.5em;color:var(--cyan)}
+.sliderrow{display:flex;align-items:center;gap:16px;width:100%;max-width:520px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:999px;
+  background:linear-gradient(90deg,var(--cyan),var(--violet));outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;
+  background:#fff;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.4);border:3px solid var(--cyan)}
+input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:#fff;cursor:pointer;border:3px solid var(--cyan)}
+.chip{font-family:var(--mono);font-size:13px;background:var(--surface);border:1px solid var(--line);
+  border-radius:999px;padding:6px 14px;white-space:nowrap}
+
+/* ---- Scene 5 ---- */
+.tree{width:min(620px,90vw);height:260px}
+.node{fill:var(--surface2);stroke:var(--line);stroke-width:1.5;transition:all .4s}
+.node.live{fill:#18323e;stroke:var(--cyan)}
+.node.best{fill:#17372b;stroke:var(--green);stroke-width:2.5}
+.node.prune{opacity:.22}
+.edge{stroke:var(--line);stroke-width:1.5;fill:none;transition:all .4s}
+.edge.best{stroke:var(--green);stroke-width:2.5}
+.eq{font-family:var(--mono)}
+
+/* ---- Scene 6 race ---- */
+.race{width:min(760px,92vw);display:flex;flex-direction:column;gap:22px;margin-top:10px}
+.lane{text-align:left}
+.lane .top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
+.lane .who{font-family:var(--disp);font-weight:600;font-size:17px}
+.lane .num{font-family:var(--mono);font-weight:700;font-size:18px}
+.track{height:34px;background:var(--surface);border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.fill{height:100%;width:0;border-radius:999px;transition:width 1.4s cubic-bezier(.22,1,.36,1)}
+.fill.greedy{background:linear-gradient(90deg,#9f1239,var(--coral))}
+.fill.opt{background:linear-gradient(90deg,#065f46,var(--green))}
+.callout{font-family:var(--disp);font-weight:700;font-size:clamp(20px,3.4vw,30px);color:var(--coral)}
+.toggle{margin-top:6px}
+.reveal80{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;
+  margin-top:6px;display:none;text-align:left;max-width:760px;font-size:14.5px;line-height:1.55;color:var(--ink2)}
+.reveal80.show{display:block}
+.reveal80 b{color:var(--ink)}
+
+/* ---- Scene 7 ---- */
+.apps{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;max-width:720px;margin-top:8px}
+.app{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 14px;
+  width:128px;font-size:13.5px;color:var(--ink2)}
+.app .ico{font-size:30px;display:block;margin-bottom:6px}
+.credits{margin-top:30px;font-size:15px;line-height:1.7}
+.credits .names{font-family:var(--disp);font-weight:600;color:var(--ink);font-size:18px}
+
+.foot{position:absolute;bottom:14px;left:0;right:0;text-align:center;font-size:11.5px;color:var(--ink2);
+  font-family:var(--mono);letter-spacing:.04em;z-index:2}
+
+@media (prefers-reduced-motion: reduce){
+  .sweep,.bounce{animation:none}
+  #deck{scroll-behavior:auto}
+  .fade{transition:none;opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<div id="deck">
+
+  <!-- ===== CENA 1 — GANCHO ===== -->
+  <section class="scene" id="s0">
+    <div class="ambient" id="amb"></div>
+    <div class="inner">
+      <div class="kicker fade">Pesquisa Operacional</div>
+      <h1 class="fade d1">Quantas câmeras a segurança de um evento precisa — e quanto isso custa?</h1>
+      <p class="lead fade d2">Spoiler: existe uma matemática que acha a resposta mais barata entre bilhões de possibilidades. Vem brincar com ela.</p>
+      <div class="row fade d3" style="margin-top:30px">
+        <button class="btn" onclick="go(1)">Começar ▸</button>
+      </div>
+    </div>
+    <div class="foot">Alocação de câmeras de custo mínimo · Programação Linear Inteira</div>
+  </section>
+
+  <!-- ===== CENA 2 — O MAPA ===== -->
+  <section class="scene" id="s1">
+    <div class="inner">
+      <div class="kicker fade">O desafio</div>
+      <h2 class="fade d1">Cada lugar precisa ser vigiado. Cada câmera enxerga um "leque".</h2>
+      <p class="lead fade d2">Alguns pontos pedem vigilância total (360°), outros só um pedaço. Câmeras com leque maior custam mais. Dá pra juntar várias para cobrir um ponto.</p>
+      <div class="cards fade d3">
+        <div class="card"><h3>📍 Os pontos</h3><p>Palco, portão, caixa… cada um exige um ângulo de visão. Precisa ser <b>totalmente coberto</b>.</p></div>
+        <div class="card violet"><h3>📷 As câmeras</h3><p>Leque de 60°, 90° ou 120°. Cada uma vigia <b>um único</b> ponto e tem seu preço.</p></div>
+        <div class="card green"><h3>🎯 A missão</h3><p>Cobrir todos os pontos <b>gastando o mínimo</b>. Simples de entender, difícil de resolver.</p></div>
+      </div>
+      <div class="row fade d4" style="margin-top:30px"><button class="btn" onclick="go(2)">Quero tentar ▸</button></div>
+    </div>
+  </section>
+
+  <!-- ===== CENA 3 — DEMO INTERATIVO ===== -->
+  <section class="scene" id="s2">
+    <div class="inner" style="width:100%">
+      <div class="kicker fade">Tente você mesmo</div>
+      <h2 class="fade d1" style="font-size:clamp(22px,3.6vw,38px)">Cubra os 3 pontos gastando o menos possível</h2>
+      <div class="demowrap fade d2">
+        <div class="stage">
+          <svg id="map" viewBox="0 0 600 420" width="100%" style="display:block"></svg>
+        </div>
+        <div class="panel">
+          <div class="costbar">
+            <div><div class="lab">Sua conta</div><div class="val" id="cost">R$ 0</div></div>
+            <div style="text-align:right"><div class="lab">Pontos ok</div><div class="val" id="okcount" style="color:var(--green)">0/3</div></div>
+          </div>
+          <div class="shop" id="shop"></div>
+          <div class="hint" id="hint">Toque numa câmera e depois num ponto para alocá-la.</div>
+          <div class="row" style="justify-content:flex-start">
+            <button class="btn ghost" onclick="demoClear()">Limpar</button>
+            <button class="btn" id="doneBtn" onclick="demoDone()" disabled>Ver resultado</button>
+          </div>
+          <div class="result" id="result"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CENA 4 — EXPLOSÃO ===== -->
+  <section class="scene" id="s3">
+    <div class="inner">
+      <div class="kicker fade">Por que é difícil</div>
+      <h2 class="fade d1">Testar todas as combinações? Impossível.</h2>
+      <div class="explo fade d2">
+        <div class="bignum" id="combo">≈ 10<sup>31</sup> combinações</div>
+        <div class="sliderrow">
+          <span class="chip" id="ptchip">5 pontos</span>
+          <input type="range" id="slider" min="0" max="4" step="1" value="0" oninput="exploUpdate()">
+        </div>
+        <div class="chip" id="varchip">105 variáveis de decisão</div>
+        <p class="lead" id="combotext">Com poucos pontos já são bilhões de planos possíveis.</p>
+      </div>
+      <div class="row fade d3" style="margin-top:28px"><button class="btn" onclick="go(4)">E como resolver? ▸</button></div>
+    </div>
+  </section>
+
+  <!-- ===== CENA 5 — A VIRADA ===== -->
+  <section class="scene" id="s4">
+    <div class="inner">
+      <div class="kicker fade">A virada</div>
+      <h2 class="fade d1">Vira matemática — e o computador resolve</h2>
+      <p class="lead fade d2">Escrevemos o problema como <b>Programação Linear Inteira</b>: um <i>solver</i> testa de forma inteligente e <b>descarta bilhões de opções ruins</b> sem precisar olhar uma por uma.</p>
+      <div class="cards fade d3">
+        <div class="card"><h3>❓ Variáveis</h3><p>"Usar esta câmera neste ponto? sim ou não." Uma decisão para cada par.</p></div>
+        <div class="card coral"><h3>💰 Objetivo</h3><p>Minimizar o custo total das câmeras usadas.</p></div>
+        <div class="card green"><h3>✅ Regras</h3><p>Todo ponto coberto · cada câmera em um só ponto.</p></div>
+      </div>
+      <svg class="tree fade d4" id="tree" viewBox="0 0 600 260" style="margin-top:14px"></svg>
+      <div class="row fade d4"><button class="btn" id="solveBtn" onclick="runTree();">Deixa o computador resolver ▸</button></div>
+    </div>
+  </section>
+
+  <!-- ===== CENA 6 — A CORRIDA ===== -->
+  <section class="scene" id="s5">
+    <div class="inner">
+      <div class="kicker fade">O resultado</div>
+      <h2 class="fade d1">Jeito apressado × jeito certeiro</h2>
+      <div class="race fade d2">
+        <div class="lane">
+          <div class="top"><span class="who" style="color:var(--coral)">⚡ Apressado (heurística gulosa)</span><span class="num" id="gnum" style="color:var(--coral)">—</span></div>
+          <div class="track"><div class="fill greedy" id="gfill"></div></div>
+        </div>
+        <div class="lane">
+          <div class="top"><span class="who" style="color:var(--green)">🎯 Certeiro (solver exato)</span><span class="num" id="onum" style="color:var(--green)">—</span></div>
+          <div class="track"><div class="fill opt" id="ofill"></div></div>
+        </div>
+        <div class="callout" id="callout" style="opacity:0;transition:opacity .6s">O apressado gastou, em média, +10,9% — até +23,5% no pior caso.</div>
+      </div>
+      <div class="row fade d3" style="margin-top:22px">
+        <button class="btn ghost toggle" onclick="toggle80()">E quando o problema cresce? ▾</button>
+      </div>
+      <div class="reveal80 fade d3" id="r80">
+        Com <b>80 pontos</b> e ~280 câmeras (mais de <b>22 mil</b> variáveis), a formulação original travou em <b>2 de 5</b> casos dentro do limite de 30s. Um truque — <b>agregar câmeras idênticas</b> — cortou ~40% das variáveis (22.336 → 13.568) e resolveu <b>todos</b>, em média <b>7,3s</b> contra 16,1s. Modelar bem vale tanto quanto ter um computador rápido.
+      </div>
+      <div class="row fade d4" style="margin-top:22px"><button class="btn" onclick="go(6)">Onde mais isso aparece? ▸</button></div>
+    </div>
+  </section>
+
+  <!-- ===== CENA 7 — MUNDO REAL + CRÉDITOS ===== -->
+  <section class="scene" id="s6">
+    <div class="inner">
+      <div class="kicker fade">No mundo real</div>
+      <h2 class="fade d1">A mesma matemática está em todo lugar</h2>
+      <div class="apps fade d2">
+        <div class="app"><span class="ico">🚚</span>Rotas de entrega</div>
+        <div class="app"><span class="ico">✈️</span>Escala de voos</div>
+        <div class="app"><span class="ico">🏥</span>Turnos de hospital</div>
+        <div class="app"><span class="ico">📡</span>Antenas 5G</div>
+        <div class="app"><span class="ico">⚡</span>Redes de energia</div>
+      </div>
+      <div class="credits fade d3">
+        <div class="small">Pesquisa Operacional · Novembro de 2026</div>
+        <div class="names">Rafael Duarte · Pedro Kemp · Nicolas Scorza</div>
+        <div class="small">Alocação de Câmeras de Custo Mínimo para Cobertura Angular — Modelagem em Programação Linear Inteira · Python + PuLP + solver CBC</div>
+      </div>
+      <div class="row fade d4" style="margin-top:28px"><button class="btn ghost" onclick="go(0)">↺ Recomeçar</button></div>
+    </div>
+  </section>
+
+</div>
+
+<!-- nav -->
+<div id="dots"></div>
+<button class="navarrow hide" id="arrowUp" onclick="go(cur-1)">▲</button>
+<button class="navarrow bounce" id="arrowDown" onclick="go(cur+1)">▼</button>
+
+<script>
+/* ============ NAV / CENAS ============ */
+const scenes=[...document.querySelectorAll('.scene')];
+const deck=document.getElementById('deck');
+const N=scenes.length;let cur=0;
+const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// dots
+const dotsBox=document.getElementById('dots');
+scenes.forEach((_,i)=>{const b=document.createElement('button');b.onclick=()=>go(i);dotsBox.appendChild(b);});
+const dots=[...dotsBox.children];
+
+function go(i){i=Math.max(0,Math.min(N-1,i));scenes[i].scrollIntoView({behavior:reduce?'auto':'smooth'});}
+function setCur(i){
+  cur=i;dots.forEach((d,k)=>d.classList.toggle('on',k===i));
+  document.getElementById('arrowUp').classList.toggle('hide',i===0);
+  document.getElementById('arrowDown').classList.toggle('hide',i===N-1);
+  if(i>0)document.getElementById('arrowDown').classList.remove('bounce');
+}
+const io=new IntersectionObserver((es)=>{
+  es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');setCur(scenes.indexOf(e.target));onEnter(scenes.indexOf(e.target));}});
+},{threshold:.55});
+scenes.forEach(s=>io.observe(s));
+
+// keyboard
+addEventListener('keydown',e=>{
+  if(['ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();go(cur+1);}
+  if(['ArrowUp','PageUp'].includes(e.key)){e.preventDefault();go(cur-1);}
+});
+
+/* ============ MODO FEIRA: reset por inatividade ============ */
+let idle;const IDLE=45000;
+function kick(){clearTimeout(idle);idle=setTimeout(()=>{demoClear();go(0);},IDLE);}
+['pointerdown','keydown','wheel','touchstart'].forEach(ev=>addEventListener(ev,kick,{passive:true}));
+kick();
+
+/* ambient cones */
+(function(){const a=document.getElementById('amb');for(let i=0;i<6;i++){const c=document.createElement('div');
+  c.className='cone'+(reduce?'':' sweep');c.style.left=(8+i*17)+'%';c.style.top=(-10+((i%2)*8))+'%';
+  c.style.animationDelay=(i*.9)+'s';c.style.opacity=.5+(i%3)*.15;a.appendChild(c);}})();
+
+/* ============ HELPERS SVG SETOR ============ */
+function polar(cx,cy,r,deg){const a=(deg-90)*Math.PI/180;return[cx+r*Math.cos(a),cy+r*Math.sin(a)];}
+function wedge(cx,cy,r,start,end){
+  if(end-start>=359.9){return `M ${cx-r} ${cy} A ${r} ${r} 0 1 1 ${cx+r} ${cy} A ${r} ${r} 0 1 1 ${cx-r} ${cy} Z`;}
+  const [sx,sy]=polar(cx,cy,r,start),[ex,ey]=polar(cx,cy,r,end);
+  const large=(end-start)>180?1:0;
+  return `M ${cx} ${cy} L ${sx} ${sy} A ${r} ${r} 0 ${large} 1 ${ex} ${ey} Z`;
+}
+
+/* ============ CENA 3 — DEMO ============ */
+const CATALOG=[
+  {id:'p',nm:'Pequena',fov:60,cost:55,col:'#60A5FA'},
+  {id:'m',nm:'Média', fov:90,cost:75,col:'#22D3EE'},
+  {id:'g',nm:'Grande',fov:120,cost:110,col:'#A78BFA'}
+];
+const POINTS=[
+  {id:'palco', nm:'Palco',  need:180,x:170,y:140},
+  {id:'portao',nm:'Portão', need:120,x:430,y:130},
+  {id:'caixa', nm:'Caixa',  need:90, x:300,y:310}
+];
+const OPT=335, GREEDY=355;   // pré-calculados p/ esta instância (ótimo: 2×Média palco, Grande portão, Média caixa)
+let sel=null; let alloc={};  // pointId -> [camIndex...]
+POINTS.forEach(p=>alloc[p.id]=[]);
+
+// shop
+const shop=document.getElementById('shop');
+CATALOG.forEach((c,i)=>{
+  const el=document.createElement('button');el.className='cam';el.dataset.i=i;
+  el.innerHTML=`<svg class="glyph" width="34" height="34" viewBox="0 0 34 34">
+    <path d="${wedge(17,30,22,-28,28)}" fill="${c.col}" opacity=".9"/><circle cx="17" cy="30" r="3" fill="#0E1420"/></svg>
+    <div class="info"><div class="nm">${c.nm}</div><div class="meta">${c.fov}° de visão · R$ ${c.cost}</div></div>`;
+  el.onclick=()=>{sel=i;[...shop.children].forEach(x=>x.classList.remove('sel'));el.classList.add('sel');
+    setHint(`Câmera ${c.nm} (${c.fov}°) selecionada. Toque num ponto.`);};
+  shop.appendChild(el);
+});
+function setHint(t){document.getElementById('hint').textContent=t;}
+
+const map=document.getElementById('map');
+function covered(p){return alloc[p.id].reduce((s,ci)=>s+CATALOG[ci].fov,0);}
+function usedCost(){let s=0;for(const p of POINTS)for(const ci of alloc[p.id])s+=CATALOG[ci].cost;return s;}
+
+function drawMap(){
+  let s='';
+  // soft floor
+  s+=`<rect x="8" y="8" width="584" height="404" rx="18" fill="#141C2C" stroke="#263249"/>`;
+  s+=`<text x="300" y="34" text-anchor="middle" class="pointsub">planta do evento — cubra o ângulo de cada ponto</text>`;
+  for(const p of POINTS){
+    const R=52, need=p.need, cov=Math.min(covered(p),need), ok=covered(p)>=need;
+    // track (required zone)
+    s+=`<g class="ptgroup" data-id="${p.id}">`;
+    s+=`<circle cx="${p.x}" cy="${p.y}" r="${R}" fill="#10192A" stroke="#263249"/>`;
+    s+=`<path d="${wedge(p.x,p.y,R,0,need)}" fill="${ok?'rgba(52,211,153,.14)':'rgba(251,113,133,.16)'}" stroke="${ok?'#34D399':'#FB7185'}" stroke-width="1.5"/>`;
+    if(cov>0)s+=`<path d="${wedge(p.x,p.y,R-6,0,cov)}" fill="${ok?'#34D399':'#22D3EE'}" opacity=".85"/>`;
+    // overshoot marker
+    if(covered(p)>need)s+=`<path d="${wedge(p.x,p.y,R+6,need,Math.min(covered(p),need+ (covered(p)-need)))}" fill="none" stroke="#A78BFA" stroke-width="2" opacity=".5"/>`;
+    s+=`<circle cx="${p.x}" cy="${p.y}" r="7" fill="${ok?'#34D399':'#FB7185'}"/>`;
+    s+=`<text x="${p.x}" y="${p.y+R+20}" text-anchor="middle" class="pointlbl">${p.nm}</text>`;
+    s+=`<text x="${p.x}" y="${p.y+R+36}" text-anchor="middle" class="pointsub">${covered(p)}° / ${need}°${ok?' ✓':''}</text>`;
+    s+=`<circle class="hitring" cx="${p.x}" cy="${p.y}" r="${R+14}"/>`;
+    s+=`</g>`;
+  }
+  map.innerHTML=s;
+  // bind clicks
+  map.querySelectorAll('.ptgroup').forEach(g=>{
+    g.addEventListener('click',()=>placeOn(g.dataset.id,g));
+  });
+  // status
+  const okc=POINTS.filter(p=>covered(p)>=p.need).length;
+  document.getElementById('cost').textContent='R$ '+usedCost();
+  document.getElementById('okcount').textContent=okc+'/3';
+  document.getElementById('doneBtn').disabled=okc<3;
+}
+function placeOn(id,g){
+  if(sel===null){setHint('Primeiro escolha uma câmera na lista. 👆');return;}
+  alloc[id].push(sel);
+  if(!reduce){g.querySelector('path').classList.add('flash');}
+  const p=POINTS.find(x=>x.id===id);
+  drawMap();
+  if(covered(p)>=p.need)setHint(`${p.nm} coberto! ✓`); else setHint(`Faltam ${p.need-covered(p)}° em ${p.nm}.`);
+}
+function demoClear(){POINTS.forEach(p=>alloc[p.id]=[]);sel=null;[...shop.children].forEach(x=>x.classList.remove('sel'));
+  document.getElementById('result').classList.remove('show');setHint('Toque numa câmera e depois num ponto para alocá-la.');drawMap();}
+function demoDone(){
+  const mine=usedCost();const r=document.getElementById('result');
+  let verdict;
+  if(mine<=OPT)verdict=`<span style="color:var(--green)">Perfeito — você achou o plano ótimo! 🏆</span>`;
+  else if(mine<=OPT*1.1)verdict=`<span style="color:var(--cyan)">Muito bom! Quase o ótimo.</span>`;
+  else verdict=`<span style="color:var(--coral)">Dá pra economizar mais.</span>`;
+  const diff=Math.round((mine-OPT)/OPT*1000)/10;
+  r.innerHTML=`${verdict}<br><div style="margin-top:8px">Seu plano: <span class="big">R$ ${mine}</span> &nbsp; <span class="tag">ótimo R$ ${OPT}</span></div>
+    <div class="small" style="margin-top:8px">${mine>OPT?`+${diff}% acima do ótimo. `:''}O computador acha o R$ ${OPT} em frações de segundo — e tem certeza de que nada é mais barato.</div>`;
+  r.classList.add('show');
+}
+drawMap();
+
+/* ============ CENA 4 — EXPLOSÃO (dados reais Tabela 1, Var. A) ============ */
+const SIZES=[5,10,20,40,80];
+const VARS=[105,350,1416,5720,22336];
+const EXPO=VARS.map(v=>Math.round(v*0.30103)); // log10(2^v)
+function exploUpdate(){
+  const i=+document.getElementById('slider').value;
+  document.getElementById('ptchip').textContent=SIZES[i]+' pontos';
+  document.getElementById('varchip').textContent=VARS[i].toLocaleString('pt-BR')+' variáveis de decisão';
+  document.getElementById('combo').innerHTML=`≈ 10<sup>${EXPO[i]}</sup> combinações`;
+  const txt=document.getElementById('combotext');
+  if(i<2)txt.textContent='Com poucos pontos já são bilhões de planos possíveis.';
+  else if(i<4)txt.textContent='O número de planos cresce muito mais rápido que o de pontos.';
+  else txt.textContent='Mais planos do que átomos no universo observável (~10⁸⁰). Força bruta está fora de questão.';
+}
+exploUpdate();
+
+/* ============ CENA 5 — ÁRVORE BRANCH & BOUND ============ */
+const tree=document.getElementById('tree');
+function buildTree(){
+  // 3 níveis simples
+  const lv=[[300],[180,420],[110,250,350,490]];
+  const y=[40,130,220];let s='';const pos={};
+  // edges
+  const edges=[[0,0,1,0],[0,0,1,1],[1,0,2,0],[1,0,2,1],[1,1,2,2],[1,1,2,3]];
+  edges.forEach((e,i)=>{s+=`<path class="edge" id="e${i}" d="M ${lv[e[0]][e[1]]} ${y[e[0]]+16} L ${lv[e[2]][e[3]]} ${y[e[2]]-16}"/>`;});
+  lv.forEach((row,li)=>row.forEach((x,ci)=>{s+=`<circle class="node" id="n${li}_${ci}" cx="${x}" cy="${y[li]}" r="16"/>`;}));
+  s+=`<text x="300" y="256" text-anchor="middle" class="pointsub">o solver abre ramos (sim/não) e poda os que não podem melhorar</text>`;
+  tree.innerHTML=s;
+}
+buildTree();
+let treeRan=false;
+function runTree(){
+  if(treeRan){return;} treeRan=true;
+  const btn=document.getElementById('solveBtn');btn.disabled=true;btn.textContent='Resolvendo…';
+  const steps=[
+    ()=>{document.getElementById('n0_0').classList.add('live');},
+    ()=>{['n1_0','n1_1'].forEach(id=>document.getElementById(id).classList.add('live'));['e0','e1'].forEach(id=>document.getElementById(id));},
+    ()=>{['n2_0','n2_1','n2_2','n2_3'].forEach(id=>document.getElementById(id).classList.add('live'));},
+    ()=>{['n2_0','n2_3'].forEach(id=>document.getElementById(id).classList.add('prune'));
+         ['n2_1'].forEach(id=>document.getElementById(id).classList.add('prune'));},
+    ()=>{document.getElementById('n2_2').classList.remove('prune');document.getElementById('n2_2').classList.add('best');
+         document.getElementById('n1_1').classList.add('best');document.getElementById('n0_0').classList.add('best');
+         document.getElementById('e1').classList.add('best');document.getElementById('e4').classList.add('best');},
+    ()=>{btn.textContent='Melhor plano encontrado ✓';btn.style.background='var(--green)';btn.style.color='#06281c';}
+  ];
+  let k=0;const run=()=>{if(k<steps.length){steps[k]();k++;setTimeout(run,reduce?200:620);}};run();
+}
+
+/* ============ CENA 6 — CORRIDA ============ */
+let raceRan=false;
+function runRace(){
+  if(raceRan)return;raceRan=true;
+  // índices: ótimo=100 (base), guloso=110.9 (média do paper). escala visual até 130.
+  const scale=v=>Math.min(100,(v/125)*100);
+  setTimeout(()=>{
+    document.getElementById('ofill').style.width=scale(100)+'%';
+    document.getElementById('gfill').style.width=scale(110.9)+'%';
+    animNum('onum',100,v=>'índice '+v);
+    animNum('gnum',110.9,v=>'índice '+v.toFixed(1));
+    setTimeout(()=>document.getElementById('callout').style.opacity=1,1200);
+  },300);
+}
+function animNum(id,target,fmt){
+  const el=document.getElementById(id);let t0=null;const dur=reduce?10:1300;
+  function step(ts){if(!t0)t0=ts;const p=Math.min(1,(ts-t0)/dur);const v=target*(1-Math.pow(1-p,3));
+    el.textContent=fmt(v);if(p<1)requestAnimationFrame(step);}requestAnimationFrame(step);
+}
+function toggle80(){document.getElementById('r80').classList.toggle('show');}
+
+/* ============ onEnter por cena ============ */
+function onEnter(i){
+  if(i===4){/* reset tree option */}
+  if(i===5)runRace();
+}
+</script>
+</body>
+</html>
