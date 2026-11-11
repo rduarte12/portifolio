@@ -10,6 +10,6 @@ if (!connectionString) {
 const client = new CosmosClient(connectionString);
 const database = client.database(databaseName);
 
-export function getContainer(name: 'posts' | 'tags' | 'accessLogs'): Container {
+export function getContainer(name: 'posts' | 'accessLogs'): Container {
   return database.container(name);
 }

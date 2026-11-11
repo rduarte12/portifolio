@@ -1,6 +1,5 @@
 import { app, type HttpRequest, type HttpResponseInit } from '@azure/functions';
 import { postsRepository } from '../repositories/postsRepository.js';
-import { tagsRepository } from '../repositories/tagsRepository.js';
 import { errorResponse, ApiError } from '../shared/errors.js';
 import { isAdmin } from '../shared/auth.js';
 
@@ -17,7 +16,6 @@ async function handler(request: HttpRequest): Promise<HttpResponseInit> {
     }
 
     await postsRepository.remove(id, existing.type);
-    await tagsRepository.detachPostFromAllTags(id);
 
     return { status: 204 };
   } catch (error) {

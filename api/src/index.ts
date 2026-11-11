@@ -9,5 +9,4 @@ import './functions/tags-list.js';
 import './functions/tags-get.js';
 import './functions/search-index.js';
 import './functions/telemetry-ingest.js';
-import './functions/tags-reconcile.js';
 import './functions/analytics-summary.js';
