@@ -10,6 +10,7 @@ if (!connectionString) {
 const client = new CosmosClient(connectionString);
 const database = client.database(databaseName);
 
-export function getContainer(name: 'posts' | 'accessLogs'): Container {
+/** Single container (`posts`, partition key /type) holds posts and access logs (type = 'accessLog'). */
+export function getContainer(name: 'posts'): Container {
   return database.container(name);
 }

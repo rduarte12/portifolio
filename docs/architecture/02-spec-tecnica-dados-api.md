@@ -54,7 +54,7 @@ Fluxo de alto nível:
 
 ## 2.3 Modelagem do banco de dados (Cosmos DB NoSQL)
 
-Uma única conta Cosmos DB (free tier), um database, dois containers:
+Uma única conta Cosmos DB (free tier), um database, um container (`posts`):
 
 ### Container `posts`
 
@@ -90,17 +90,19 @@ Campos-chave:
 
 ### Tags (derivadas, sem container próprio)
 
-> **Decisão revisada:** a conta no plano gratuito não oferece throughput compartilhado no database. Com throughput dedicado o mínimo é 400 RU/s por container, então só cabem **2 containers** nos 1000 RU/s grátis (2 × 400 = 800). Por isso o design usa apenas `posts` e `accessLogs`.
+> **Decisão revisada:** a conta no plano gratuito não oferece throughput compartilhado no database, e o mínimo dedicado é 400 RU/s por container. Na prática (conta Azure for Students) só coube **1 container** com 400 RU/s dentro do limite de 1000 RU/s. Por isso o design usa um único container, `posts`, que guarda posts e logs de acesso (distinguidos por `type`).
 
 As tags não têm container: `GET /api/tags` e `GET /api/tags/{slug}` leem os posts publicados e agrupam por tag em memória (`tagsRepository`). Com dezenas de posts o custo extra de RU é desprezível. Se o volume crescer muito, a otimização original (um documento por tag com a lista de posts, partition key `/tagSlug`) pode ser reintroduzida num terceiro container.
 
-### Container `accessLogs`
+### Logs de acesso (documentos `type: "accessLog"` no container `posts`)
 
-**Partition key: `/yearMonth`** (ex: `"2026-01"`) — agrupa logs por mês, permitindo definir TTL (`defaultTtl`) para expirar logs antigos automaticamente e manter o container dentro do free tier de armazenamento.
+Ficam na partição lógica `accessLog` (partition key `/type`), com o campo `yearMonth` (ex: `"2026-01"`) para filtrar por mês. Cada log tem `ttl` próprio (180 dias); o TTL do container deve estar **On (no default)**, assim posts nunca expiram.
 
 ```json
 {
   "id": "log_a1b2c3d4",
+  "type": "accessLog",
+  "ttl": 15552000,
   "yearMonth": "2026-01",
   "postId": "post_2026_01_attention-is-all-you-need-review",
   "eventType": "page_view",
@@ -113,7 +115,7 @@ As tags não têm container: `GET /api/tags` e `GET /api/tags/{slug}` leem os po
 
 - `ipHash`: hash (SHA-256) do IP, nunca o IP em texto puro — mitigação de privacidade (o requisito de negócio pede "IPs" no dashboard, mas armazenar IP bruto é desnecessário para "páginas mais acessadas" e é um risco de LGPD; hash permite ainda contar visitantes únicos aproximados sem reter dado pessoal identificável diretamente).
 - `eventType`: `"page_view" | "read_more_click" | "like" | "share"`.
-- TTL sugerido: `defaultTtl: 15552000` (180 dias) no container, para não acumular indefinidamente.
+- TTL: `ttl: 15552000` (180 dias) por documento, com TTL do container ligado sem valor padrão.
 
 ### Estratégia de atualização de contadores (RNF07)
 
@@ -147,7 +149,7 @@ Todas as rotas sob `/api/*`, implementadas como Azure Functions HTTP-triggered. 
 | GET | `/api/tags` | Público | Lista todas as tags com `postCount`. |
 | GET | `/api/tags/{slug}` | Público | Retorna a tag e seus `postRefs` (posts relacionados). |
 | GET | `/api/search-index` | Público | Retorna array leve `{id, type, title, summary, tags}[]` de todos os posts publicados, para o Fuse.js client-side (ver [03](03-estrategia-busca.md)). |
-| POST | `/api/telemetry` | Público | Registra um evento em `accessLogs` (page_view, read_more_click, etc). |
+| POST | `/api/telemetry` | Público | Registra um evento de acesso (`type: accessLog`) (page_view, read_more_click, etc). |
 
 ### Exemplos de request/response
 

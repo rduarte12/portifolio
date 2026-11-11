@@ -24,9 +24,9 @@ No plano **Free** do SWA, a função de roles customizadas (`auth.rolesSource` a
 
 ## 4.2 Dashboard de métricas
 
-**Decisão**: agregados lidos diretamente do container `accessLogs` no Cosmos DB, **não** Application Insights — Application Insights tem custo de ingestão fora do free tier em volume, enquanto os logs já persistidos no Cosmos (dentro do free tier, ver [02](02-spec-tecnica-dados-api.md)) são suficientes e gratuitos para as métricas de um portfólio pessoal.
+**Decisão**: agregados lidos diretamente do logs de acesso (`type: accessLog` no container `posts`) no Cosmos DB, **não** Application Insights — Application Insights tem custo de ingestão fora do free tier em volume, enquanto os logs já persistidos no Cosmos (dentro do free tier, ver [02](02-spec-tecnica-dados-api.md)) são suficientes e gratuitos para as métricas de um portfólio pessoal.
 
-Página `/admin/dashboard` (protegida pela mesma role `admin`), consumindo uma Function `GET /api/analytics/summary` que roda queries agregadas sobre `accessLogs`:
+Página `/admin/dashboard` (protegida pela mesma role `admin`), consumindo uma Function `GET /api/analytics/summary` que roda queries agregadas sobre os logs de acesso:
 
 | Métrica | Query conceitual |
 |---|---|
