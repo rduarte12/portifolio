@@ -15,6 +15,38 @@
     {
       "route": "/auth",
       "rewrite": "/index.html"
+    },
+    {
+      "route": "/admin*",
+      "rewrite": "/index.html",
+      "allowedRoles": [
+        "admin"
+      ]
+    },
+    {
+      "route": "/api/posts",
+      "methods": [
+        "POST"
+      ],
+      "allowedRoles": [
+        "admin"
+      ]
+    },
+    {
+      "route": "/api/posts/{id}",
+      "methods": [
+        "PUT",
+        "DELETE"
+      ],
+      "allowedRoles": [
+        "admin"
+      ]
+    },
+    {
+      "route": "/api/analytics/*",
+      "allowedRoles": [
+        "admin"
+      ]
     }
   ],
   "globalHeaders": {

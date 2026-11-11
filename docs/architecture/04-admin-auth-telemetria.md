@@ -10,21 +10,17 @@ Usa o **built-in auth do Azure Static Web Apps** (sem código de auth custom no 
 
 ### Restringindo o admin a um único usuário (o dono do portfólio)
 
-O SWA free tier não tem um sistema nativo de "roles customizadas por usuário" fora do que é builtin (`anonymous`, `authenticated`). Para restringir `/admin/*` **apenas ao dono** (não a qualquer conta GitHub que faça login), é necessário uma **Azure Function de roles customizadas** (`/api/GetRoles`), registrada em `staticwebapp.config.json`:
+No plano **Free** do SWA, a função de roles customizadas (`auth.rolesSource` apontando para uma Function) **não é suportada**: o deploy é rejeitado com "only supported on the Standard SKU". A alternativa gratuita são os **convites de usuário**: no portal do Static Web App, em *Role management → Invite*, convide o seu usuário GitHub atribuindo a role customizada `admin`. Só quem aceitou o convite recebe a role, então `/admin*` e as rotas de escrita ficam restritas ao dono. A role chega às Functions no header `x-ms-client-principal` (`userRoles`), que `isAdmin()` já lê.
 
 ```json
 {
   "routes": [
-    { "route": "/admin/*", "allowedRoles": ["admin"] },
-    { "route": "/api/posts", "methods": ["POST", "PUT", "DELETE"], "allowedRoles": ["admin"] }
-  ],
-  "auth": {
-    "rolesSource": "/api/GetRoles"
-  }
+    { "route": "/admin*", "allowedRoles": ["admin"] },
+    { "route": "/api/posts", "methods": ["POST"], "allowedRoles": ["admin"] },
+    { "route": "/api/posts/{id}", "methods": ["PUT", "DELETE"], "allowedRoles": ["admin"] }
+  ]
 }
 ```
-
-A Function `GetRoles` recebe o `userId`/`userDetails` do provedor (login do GitHub) e retorna `{"roles": ["admin"]}` apenas se o `userDetails` (username do GitHub) bater com o valor configurado (variável de ambiente `OWNER_GITHUB_USERNAME`); caso contrário retorna `{"roles": []}`. Isso evita hardcodar o username diretamente no código.
 
 ## 4.2 Dashboard de métricas
 
