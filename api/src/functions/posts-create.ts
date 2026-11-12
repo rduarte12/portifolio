@@ -1,6 +1,5 @@
 import { app, type HttpRequest, type HttpResponseInit } from '@azure/functions';
 import { postsRepository } from '../repositories/postsRepository.js';
-import { tagsRepository } from '../repositories/tagsRepository.js';
 import { createPostSchema } from '../validation/postSchema.js';
 import { errorResponse, ApiError } from '../shared/errors.js';
 import { isAdmin } from '../shared/auth.js';
@@ -18,12 +17,6 @@ async function handler(request: HttpRequest): Promise<HttpResponseInit> {
     }
 
     const post = await postsRepository.create(parsed.data);
-    await tagsRepository.attachPostToTags(post.tags, {
-      postId: post.id,
-      type: post.type,
-      title: post.title,
-      date: post.date,
-    });
 
     return { status: 201, jsonBody: post };
   } catch (error) {

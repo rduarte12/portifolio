@@ -7,81 +7,73 @@ export interface PostRef {
   date: string;
 }
 
-export interface TagDocument {
-  id: string;
+export interface TagSummary {
   tagSlug: string;
   label: string;
-  postRefs: PostRef[];
   postCount: number;
+}
+
+export interface TagDetail extends TagSummary {
+  postRefs: PostRef[];
+}
+
+interface PublishedPost {
+  id: string;
+  type: PostRef['type'];
+  title: string;
+  date: string;
+  tags: string[];
 }
 
 function slugify(label: string): string {
   return label
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
+    .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
 }
 
+async function listPublishedPosts(): Promise<PublishedPost[]> {
+  const container = getContainer('posts');
+  const { resources } = await container.items
+    .query<PublishedPost>('SELECT c.id, c.type, c.title, c.date, c.tags FROM c WHERE c.status = "published"')
+    .fetchAll();
+  return resources;
+}
+
+// Tags are derived from posts on read: with a small portfolio this avoids a third container.
 export const tagsRepository = {
-  async list(): Promise<TagDocument[]> {
-    const container = getContainer('tags');
-    const { resources } = await container.items.query<TagDocument>('SELECT * FROM c').fetchAll();
-    return resources;
-  },
+  async list(): Promise<TagSummary[]> {
+    const posts = await listPublishedPosts();
+    const bySlug = new Map<string, TagSummary>();
 
-  async getBySlug(slug: string): Promise<TagDocument | null> {
-    try {
-      const container = getContainer('tags');
-      const { resource } = await container.item(`tag_${slug}`, slug).read<TagDocument>();
-      return resource ?? null;
-    } catch {
-      return null;
-    }
-  },
-
-  /** Adds/updates the given post reference in every tag it belongs to. Idempotent. */
-  async attachPostToTags(labels: string[], ref: PostRef): Promise<void> {
-    const container = getContainer('tags');
-    for (const label of labels) {
-      const slug = slugify(label);
-      const existing = await this.getBySlug(slug);
-
-      if (existing) {
-        const otherRefs = existing.postRefs.filter((r) => r.postId !== ref.postId);
-        const postRefs = [...otherRefs, ref];
-        await container.item(existing.id, slug).replace<TagDocument>({
-          ...existing,
-          postRefs,
-          postCount: postRefs.length,
-        });
-      } else {
-        const doc: TagDocument = {
-          id: `tag_${slug}`,
-          tagSlug: slug,
-          label,
-          postRefs: [ref],
-          postCount: 1,
-        };
-        await container.items.create(doc);
+    for (const post of posts) {
+      for (const label of post.tags) {
+        const tagSlug = slugify(label);
+        const existing = bySlug.get(tagSlug);
+        if (existing) existing.postCount += 1;
+        else bySlug.set(tagSlug, { tagSlug, label, postCount: 1 });
       }
     }
+
+    return [...bySlug.values()].sort((a, b) => a.label.localeCompare(b.label));
   },
 
-  /** Removes a post reference from every tag document. Idempotent. */
-  async detachPostFromAllTags(postId: string): Promise<void> {
-    const container = getContainer('tags');
-    const { resources } = await container.items.query<TagDocument>('SELECT * FROM c').fetchAll();
+  async getBySlug(slug: string): Promise<TagDetail | null> {
+    const posts = await listPublishedPosts();
+    let label: string | null = null;
+    const postRefs: PostRef[] = [];
 
-    for (const tag of resources) {
-      if (!tag.postRefs.some((r) => r.postId === postId)) continue;
-      const postRefs = tag.postRefs.filter((r) => r.postId !== postId);
-      await container.item(tag.id, tag.tagSlug).replace<TagDocument>({
-        ...tag,
-        postRefs,
-        postCount: postRefs.length,
-      });
+    for (const post of posts) {
+      const match = post.tags.find((t) => slugify(t) === slug);
+      if (!match) continue;
+      label ??= match;
+      postRefs.push({ postId: post.id, type: post.type, title: post.title, date: post.date });
     }
+
+    if (label === null) return null;
+    postRefs.sort((a, b) => b.date.localeCompare(a.date));
+    return { tagSlug: slug, label, postCount: postRefs.length, postRefs };
   },
 };

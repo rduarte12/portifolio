@@ -49,12 +49,12 @@ Fluxo de alto nível:
 ```
 
 - **Leitura (visitante lista posts)**: `Browser → GET /api/posts?type=blog → Function lê container posts (query por partition key /type) → retorna JSON → React renderiza FeedCard`. Nenhuma autenticação envolvida.
-- **Escrita (admin cria post)**: `Browser (logado via GitHub) → POST /api/posts com header x-ms-client-principal (injetado automaticamente pelo SWA) → Function valida role "admin" → grava documento em posts → atualiza array postRefs no(s) documento(s) de tags correspondentes → retorna 201`.
+- **Escrita (admin cria post)**: `Browser (logado via GitHub) → POST /api/posts com header x-ms-client-principal (injetado automaticamente pelo SWA) → Function valida role "admin" → grava documento em posts → retorna 201`.
 - A separação física entre estático (SWA) e dinâmico (Functions) é obrigatória no plano free do SWA: ele não hospeda backend custom próprio além da integração "managed functions" (que é exatamente uma Azure Function App vinculada, gratuita até o limite do Consumption plan).
 
 ## 2.3 Modelagem do banco de dados (Cosmos DB NoSQL)
 
-Uma única conta Cosmos DB (free tier), um database, três containers:
+Uma única conta Cosmos DB (free tier), um database, um container (`posts`):
 
 ### Container `posts`
 
@@ -88,32 +88,21 @@ Campos-chave:
 
 **Indexação**: política de indexação customizada excluindo o caminho `/body/*` do índice automático do Cosmos (reduz RU de escrita, já que o corpo Markdown pode ser grande e nunca é filtrado/ordenado por query).
 
-### Container `tags`
+### Tags (derivadas, sem container próprio)
 
-**Partition key: `/tagSlug`** — cada tag é seu próprio documento/partição; buscas por tag são sempre point-reads ou queries de partição única.
+> **Decisão revisada:** a conta no plano gratuito não oferece throughput compartilhado no database, e o mínimo dedicado é 400 RU/s por container. Na prática (conta Azure for Students) só coube **1 container** com 400 RU/s dentro do limite de 1000 RU/s. Por isso o design usa um único container, `posts`, que guarda posts e logs de acesso (distinguidos por `type`).
 
-```json
-{
-  "id": "tag_nlp",
-  "tagSlug": "nlp",
-  "label": "NLP",
-  "postRefs": [
-    { "postId": "post_2026_01_attention-is-all-you-need-review", "type": "research", "title": "Uma releitura crítica de \"Attention Is All You Need\"", "date": "2026-01-14" },
-    { "postId": "post_2025_11_fine-tuning-llms-portugues", "type": "blog", "title": "Fine-tuning de LLMs para português", "date": "2025-11-02" }
-  ],
-  "postCount": 2
-}
-```
+As tags não têm container: `GET /api/tags` e `GET /api/tags/{slug}` leem os posts publicados e agrupam por tag em memória (`tagsRepository`). Com dezenas de posts o custo extra de RU é desprezível. Se o volume crescer muito, a otimização original (um documento por tag com a lista de posts, partition key `/tagSlug`) pode ser reintroduzida num terceiro container.
 
-Este é o "nó de tags cruzadas": em vez de fazer uma query custosa em `posts` filtrando por `ARRAY_CONTAINS(tags, @tagSlug)` (que faria fan-out entre as 3 partições de `type`), a leitura de "todos os posts com a tag X" é um único point-read no container `tags` — muito mais barato em RU.
+### Logs de acesso (documentos `type: "accessLog"` no container `posts`)
 
-### Container `accessLogs`
-
-**Partition key: `/yearMonth`** (ex: `"2026-01"`) — agrupa logs por mês, permitindo definir TTL (`defaultTtl`) para expirar logs antigos automaticamente e manter o container dentro do free tier de armazenamento.
+Ficam na partição lógica `accessLog` (partition key `/type`), com o campo `yearMonth` (ex: `"2026-01"`) para filtrar por mês. Cada log tem `ttl` próprio (180 dias); o TTL do container deve estar **On (no default)**, assim posts nunca expiram.
 
 ```json
 {
   "id": "log_a1b2c3d4",
+  "type": "accessLog",
+  "ttl": 15552000,
   "yearMonth": "2026-01",
   "postId": "post_2026_01_attention-is-all-you-need-review",
   "eventType": "page_view",
@@ -126,7 +115,7 @@ Este é o "nó de tags cruzadas": em vez de fazer uma query custosa em `posts` f
 
 - `ipHash`: hash (SHA-256) do IP, nunca o IP em texto puro — mitigação de privacidade (o requisito de negócio pede "IPs" no dashboard, mas armazenar IP bruto é desnecessário para "páginas mais acessadas" e é um risco de LGPD; hash permite ainda contar visitantes únicos aproximados sem reter dado pessoal identificável diretamente).
 - `eventType`: `"page_view" | "read_more_click" | "like" | "share"`.
-- TTL sugerido: `defaultTtl: 15552000` (180 dias) no container, para não acumular indefinidamente.
+- TTL: `ttl: 15552000` (180 dias) por documento, com TTL do container ligado sem valor padrão.
 
 ### Estratégia de atualização de contadores (RNF07)
 
@@ -140,13 +129,9 @@ await container.item(postId, postType).patch([
 ]);
 ```
 
-### Consistência de tags cruzadas na escrita
+### Consistência de tags
 
-Ao criar/editar um post com tags `["nlp", "transformers"]`, a Function executa:
-1. Upsert do documento em `posts` (operação 1).
-2. Para cada tag, upsert do documento em `tags` adicionando/atualizando a entrada correspondente em `postRefs` (operação 2, 3, ...).
-
-Como Cosmos DB não suporta transações cross-partition/cross-container nativamente, essas operações são **idempotentes e sequenciais**, não atômicas: se a operação 1 tiver sucesso e uma das operações de tag falhar, o post fica publicado mas uma tag fica temporariamente desatualizada. Plano de reconciliação: uma Function agendada (Timer Trigger, dentro do free tier) roda periodicamente reconstruindo `postRefs` de cada tag a partir de uma varredura de `posts` (idempotente, corrige qualquer drift). Como o volume é baixo (RNF05), essa reconciliação é barata e suficiente — não justifica a complexidade de um Change Feed neste estágio.
+Como as tags são derivadas dos posts na leitura, não há segunda escrita nem reconciliação: criar, editar ou apagar um post já reflete nas tags imediatamente.
 
 ## 2.4 Contratos de API
 
@@ -158,13 +143,13 @@ Todas as rotas sob `/api/*`, implementadas como Azure Functions HTTP-triggered. 
 | GET | `/api/posts/{id}` | Público | Retorna um post completo (incluindo `body`). 404 se não existir ou não estiver publicado. |
 | POST | `/api/posts` | Admin | Cria um novo post. |
 | PUT | `/api/posts/{id}` | Admin | Atualiza um post existente. |
-| DELETE | `/api/posts/{id}` | Admin | Remove um post (e reconcilia `postRefs` das tags afetadas). |
+| DELETE | `/api/posts/{id}` | Admin | Remove um post. |
 | POST | `/api/posts/{id}/view` | Público (rate-limited) | Incrementa `viewsCount` via patch. Rate-limit simples por IP+postId (ex: 1 por minuto) para mitigar abuso. |
 | POST | `/api/posts/{id}/like` | Público (idempotente) | Incrementa `likesCount`; idempotência garantida por um cookie/fingerprint de sessão gravado no browser (não por conta de usuário, já que visitantes não têm login). |
 | GET | `/api/tags` | Público | Lista todas as tags com `postCount`. |
 | GET | `/api/tags/{slug}` | Público | Retorna a tag e seus `postRefs` (posts relacionados). |
 | GET | `/api/search-index` | Público | Retorna array leve `{id, type, title, summary, tags}[]` de todos os posts publicados, para o Fuse.js client-side (ver [03](03-estrategia-busca.md)). |
-| POST | `/api/telemetry` | Público | Registra um evento em `accessLogs` (page_view, read_more_click, etc). |
+| POST | `/api/telemetry` | Público | Registra um evento de acesso (`type: accessLog`) (page_view, read_more_click, etc). |
 
 ### Exemplos de request/response
 
@@ -236,7 +221,6 @@ api/
 │   │   ├── tags-get.ts          (GET /api/tags/{slug})
 │   │   ├── search-index.ts      (GET /api/search-index)
 │   │   ├── telemetry-ingest.ts  (POST /api/telemetry)
-│   │   └── tags-reconcile.ts    (Timer Trigger — reconciliação periódica)
 │   ├── repositories/
 │   │   ├── postsRepository.ts   (isola o SDK do Cosmos para o container posts)
 │   │   ├── tagsRepository.ts
@@ -256,4 +240,4 @@ Princípios de implementação:
 - **Repository pattern**: nenhuma Function chama o SDK do Cosmos diretamente; todas passam por `postsRepository`/`tagsRepository`/`accessLogsRepository`, o que isola a lógica de queries/patches e facilita testes com mocks.
 - **Validação de entrada**: todo body de POST/PUT passa por um schema Zod antes de tocar o repository; falha de validação retorna `400` com o formato de erro padronizado.
 - **Tratamento de erros**: um middleware/wrapper comum captura exceções não tratadas e as converte para o payload `{error: {code, message}}` com status apropriado, evitando vazamento de stack trace.
-- **Testes de integração mínimos recomendados**: suíte cobrindo (a) CRUD feliz-caminho de um post, (b) tentativa de escrita sem sessão admin retorna 401/403, (c) incremento de view/like é idempotente/cumulativo conforme esperado, (d) reconciliação de tags corrige um `postRefs` desatualizado — rodando contra o **Cosmos DB Emulator** local (gratuito, container Docker) para não consumir RU do ambiente de produção durante CI.
+- **Testes de integração mínimos recomendados**: suíte cobrindo (a) CRUD feliz-caminho de um post, (b) tentativa de escrita sem sessão admin retorna 401/403, (c) incremento de view/like é idempotente/cumulativo conforme esperado — rodando contra o **Cosmos DB Emulator** local (gratuito, container Docker) para não consumir RU do ambiente de produção durante CI.

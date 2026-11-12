@@ -3,12 +3,15 @@ import { getContainer } from '../shared/cosmosClient.js';
 
 export interface AccessLogDocument {
   id: string;
+  type: 'accessLog';
   yearMonth: string;
   postId: string;
   eventType: 'page_view' | 'read_more_click' | 'like' | 'share';
   timestamp: string;
   durationMs?: number;
   ipHash: string;
+  /** Per-document TTL in seconds (container TTL must be On, no default). */
+  ttl: number;
 }
 
 export interface AnalyticsSummary {
@@ -19,28 +22,32 @@ export interface AnalyticsSummary {
   uniqueVisitors: number;
 }
 
+const LOG_TTL_SECONDS = 15552000; // 180 days
+
 export const accessLogsRepository = {
   async record(postId: string, eventType: AccessLogDocument['eventType'], ip: string, durationMs?: number): Promise<void> {
-    const container = getContainer('accessLogs');
+    const container = getContainer('posts');
     const now = new Date();
     const doc: AccessLogDocument = {
       id: `log_${randomUUID().slice(0, 12)}`,
+      type: 'accessLog',
       yearMonth: now.toISOString().slice(0, 7),
       postId,
       eventType,
       timestamp: now.toISOString(),
       durationMs,
+      ttl: LOG_TTL_SECONDS,
       ipHash: createHash('sha256').update(ip).digest('hex'),
     };
     await container.items.create(doc);
   },
 
-  /** Aggregates accessLogs for a given month (default: current month) into dashboard-ready summaries. */
+  /** Aggregates access logs (type = accessLog, stored in the posts container) for a given month (default: current month) into dashboard-ready summaries. */
   async summary(yearMonth = new Date().toISOString().slice(0, 7)): Promise<AnalyticsSummary> {
-    const container = getContainer('accessLogs');
+    const container = getContainer('posts');
     const { resources } = await container.items
       .query<AccessLogDocument>({
-        query: 'SELECT * FROM c WHERE c.yearMonth = @yearMonth',
+        query: 'SELECT * FROM c WHERE c.type = "accessLog" AND c.yearMonth = @yearMonth',
         parameters: [{ name: '@yearMonth', value: yearMonth }],
       })
       .fetchAll();

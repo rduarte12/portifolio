@@ -17,7 +17,7 @@ Cada fase indica o que é 100% gratuito no código/config vs. o que exige criar/
 ## Fase 1 — Provisionamento de infraestrutura (gratuita, configuração Azure)
 
 - Criar conta Azure Cosmos DB (free tier: 1000 RU/s + 25GB grátis por conta, por assinatura).
-- Criar os 3 containers (`posts`, `tags`, `accessLogs`) com as partition keys definidas em [02](02-spec-tecnica-dados-api.md) §2.3.
+- Criar 1 container (`posts`, partition key `/type`, 400 RU/s manual, TTL On sem padrão); os logs de acesso ficam nele com `type: "accessLog"`, conforme [02](02-spec-tecnica-dados-api.md) §2.3.
 - Criar/configurar a Azure Function App vinculada ao Static Web App (managed functions — dentro do free tier de SWA, sem custo adicional além do Consumption plan da Function, que também tem grant gratuito de 1M execuções/mês).
 - Registrar um GitHub OAuth App (gratuito) para o login do admin, e configurar as variáveis de ambiente do SWA (`GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`).
 - Configurar `staticwebapp.config.json` com as rotas `allowedRoles` descritas em [04](04-admin-auth-telemetria.md).
@@ -36,7 +36,7 @@ Cada fase indica o que é 100% gratuito no código/config vs. o que exige criar/
 
 - Implementar a tela `/admin` (protegida por `allowedRoles: ["admin"]`) com login via `/.auth/login/github`.
 - Convidar o próprio usuário GitHub com a role `admin` (portal do SWA → Role management → Invite); `rolesSource` exige plano Standard.
-- Implementar as Functions de escrita: `POST/PUT/DELETE /api/posts`, incluindo validação (Zod) e reconciliação de tags.
+- Implementar as Functions de escrita: `POST/PUT/DELETE /api/posts`, incluindo validação (Zod).
 - Implementar o `AdminEditor` (Markdown + preview + sanitização) descrito em [04](04-admin-auth-telemetria.md) §4.3.
 
 **Gratuito**, mesmos recursos da Fase 1.
@@ -46,7 +46,7 @@ Cada fase indica o que é 100% gratuito no código/config vs. o que exige criar/
 - Implementar `POST /api/telemetry` e o beacon no frontend (`visibilitychange`/`sendBeacon`) para `page_view` e `read_more_click`.
 - Implementar `POST /api/posts/{id}/view` e `POST /api/posts/{id}/like` com a estratégia de Patch API ([02](02-spec-tecnica-dados-api.md) §2.3).
 - Implementar `GET /api/analytics/summary` e a página `/admin/dashboard` consumindo essas agregações.
-- Configurar a Function de reconciliação de tags (Timer Trigger) e o TTL do container `accessLogs`.
+- Ligar o TTL do container `posts` (On, sem padrão); os logs expiram por `ttl` próprio.
 
 **Gratuito** dentro dos free tiers já provisionados.
 

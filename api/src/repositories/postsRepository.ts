@@ -71,7 +71,7 @@ export const postsRepository = {
   async getByIdAnyType(id: string): Promise<PostDocument | null> {
     const container = getContainer('posts');
     const { resources } = await container.items
-      .query<PostDocument>({ query: 'SELECT * FROM c WHERE c.id = @id', parameters: [{ name: '@id', value: id }] })
+      .query<PostDocument>({ query: 'SELECT * FROM c WHERE c.id = @id AND c.type IN ("blog", "research", "project")', parameters: [{ name: '@id', value: id }] })
       .fetchAll();
     return resources[0] ?? null;
   },
